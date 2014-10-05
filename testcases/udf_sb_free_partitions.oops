@@ -1,0 +1,40 @@
+BUG: unable to handle kernel NULL pointer dereference at 0000000000000054
+IP: [<ffffffffa05c20f1>] udf_sb_free_partitions+0x71/0x140 [udf]
+PGD 0 
+Oops: 0000 [#1] SMP 
+Modules linked in: nls_utf8 udf nf_conntrack_netbios_ns nf_conntrack_broadcast ipt_MASQUERADE ip6table_mangle ip6t_REJECT nf_conntrack_ipv6 nf_defrag_ipv6 iptable_nat nf_nat_ipv4 nf_nat iptable_mangle nf_conntrack_ipv4 nf_defrag_ipv4 xt_conntrack nf_conntrack ebtable_filter ebtables bnep bluetooth rfkill ip6table_filter ip6_tables fuse snd_hda_codec_realtek snd_ice1724 snd_ak4113 snd_pt2258 snd_ak4114 snd_i2c snd_ice17xx_ak4xxx snd_ak4xxx_adda snd_hda_intel snd_rawmidi snd_hda_codec snd_ac97_codec ac97_bus snd_hwdep snd_seq snd_seq_device snd_pcm gspca_spca505 gspca_main videodev ppdev snd_page_alloc snd_timer snd media soundcore k8temp ses kvm_amd enclosure kvm lm63 edac_core edac_mce_amd i2c_nforce2 forcedeth parport_pc parport binfmt_misc uinput radeon i2c_algo_bit drm_kms_helper btrfs ttm firewire_ohci drm firewire_core ata_generic pata_acpi libcrc32c zlib_deflate i2c_core pata_amd crc_itu_t dc395x sata_sil ums_cypress usb_storage
+CPU 0 
+Pid: 2084, comm: mount Not tainted 3.7.5-201.fc18.x86_64 #1 Gigabyte Technology Co., Ltd. M56S-S3/GA-M56S-S3
+RIP: 0010:[<ffffffffa05c20f1>]  [<ffffffffa05c20f1>] udf_sb_free_partitions+0x71/0x140 [udf]
+RSP: 0018:ffff8800bbd8bc38  EFLAGS: 00010246
+RAX: 0000000000000004 RBX: 0000000000000000 RCX: 0000000000000056
+RDX: 0000000000000088 RSI: 0000000000000046 RDI: ffff8800bbd30400
+RBP: ffff8800bbd8bc58 R08: 000000000000000a R09: 000000000000171d
+R10: 0000000000000000 R11: 000000000000171c R12: ffff8800bbd30400
+R13: 0000000000000000 R14: ffff8800dfa73840 R15: ffff88011ac2aa40
+FS:  00007f4960ce8840(0000) GS:ffff88011fc00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 000000008005003b
+CR2: 0000000000000054 CR3: 00000000bbe6a000 CR4: 00000000000007f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000ffff0ff0 DR7: 0000000000000400
+Process mount
+Stack:
+ ffff8800dfa73840 ffff8800bbd30400 0000000000000000 ffff8800bbd8bc84
+ ffff8800bbd8bcf8 ffffffffa05c3f68 ffff8800bbd30468 ffffffff00000020
+ ffff8800bbd8bcc8 00000000bbd8bc88 ffff8800bbd80001 ffff8800bbd30400
+Call Trace:
+ [<ffffffffa05c3f68>] udf_fill_super+0x3e8/0x610 [udf]
+ [<ffffffff81198095>] mount_bdev+0x1c5/0x210
+ [<ffffffffa05c3b80>] ? udf_load_vrs+0x2e0/0x2e0 [udf]
+ [<ffffffffa05c1095>] udf_mount+0x15/0x20 [udf]
+ [<ffffffff81198d83>] mount_fs+0x43/0x1b0
+ [<ffffffff811b205f>] vfs_kern_mount+0x6f/0x100
+ [<ffffffff811b2ad4>] do_kern_mount+0x54/0x110
+ [<ffffffff811b4635>] do_mount+0x315/0x8e0
+ [<ffffffff811b418a>] ? copy_mount_options+0x3a/0x180
+ [<ffffffff811b4c8e>] sys_mount+0x8e/0xe0
+ [<ffffffff8163e199>] system_call_fastpath+0x16/0x1b
+Code: 66 3d 11 25 0f 84 b8 00 00 00 41 0f b7 46 28 41 83 c5 01 44 39 e8 0f 8e 89 00 00 00 49 63 dd b9 56 00 00 00 48 0f af d9 49 03 1e <0f> b7 43 54 a8 02 74 b7 48 8b 3b e8 ff c8 be e0 0f b7 43 54 a8 
+RIP  [<ffffffffa05c20f1>] udf_sb_free_partitions+0x71/0x140 [udf]
+ RSP <ffff8800bbd8bc38>
+CR2: 0000000000000054

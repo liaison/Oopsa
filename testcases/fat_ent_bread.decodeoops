@@ -1,0 +1,36 @@
+Code: 0c 89 c6 8b 45 08 89 d3 85 ff 89 4d e8 89 45 f0 8b 86 e4 01 00 00 8b 90 90 00 00 00 89 55 ec 0f 55 f0 0a 75 05 3b 55 f0 8b 04 8b <80> 94 00 00 00 0c 13 89 43 18 8b 56 10 00 00 90 00 00 00 89 14
+All code
+========
+   0:	0c 89                	or     $0x89,%al
+   2:	c6                   	(bad)  
+   3:	8b 45 08             	mov    0x8(%rbp),%eax
+   6:	89 d3                	mov    %edx,%ebx
+   8:	85 ff                	test   %edi,%edi
+   a:	89 4d e8             	mov    %ecx,-0x18(%rbp)
+   d:	89 45 f0             	mov    %eax,-0x10(%rbp)
+  10:	8b 86 e4 01 00 00    	mov    0x1e4(%rsi),%eax
+  16:	8b 90 90 00 00 00    	mov    0x90(%rax),%edx
+  1c:	89 55 ec             	mov    %edx,-0x14(%rbp)
+  1f:	0f 55 f0             	andnps %xmm0,%xmm6
+  22:	0a 75 05             	or     0x5(%rbp),%dh
+  25:	3b 55 f0             	cmp    -0x10(%rbp),%edx
+  28:	8b 04 8b             	mov    (%rbx,%rcx,4),%eax
+  2b:*	80 94 00 00 00 0c 13 	adcb   $0x89,0x130c0000(%rax,%rax,1)     <-- trapping instruction
+  32:	89 
+  33:	43 18 8b 56 10 00 00 	rex.XB sbb %cl,0x1056(%r11)
+  3a:	90                   	nop
+  3b:	00 00                	add    %al,(%rax)
+  3d:	00                   	.byte 0x0
+  3e:	89                   	.byte 0x89
+  3f:	14                   	.byte 0x14
+
+Code starting with the faulting instruction
+===========================================
+   0:	80 94 00 00 00 0c 13 	adcb   $0x89,0x130c0000(%rax,%rax,1)
+   7:	89 
+   8:	43 18 8b 56 10 00 00 	rex.XB sbb %cl,0x1056(%r11)
+   f:	90                   	nop
+  10:	00 00                	add    %al,(%rax)
+  12:	00                   	.byte 0x0
+  13:	89                   	.byte 0x89
+  14:	14                   	.byte 0x14

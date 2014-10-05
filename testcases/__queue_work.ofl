@@ -1,0 +1,22 @@
+GNU gdb (GDB) 7.4.1-debian
+Copyright (C) 2012 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.  Type "show copying"
+and "show warranty" for details.
+This GDB was configured as "x86_64-linux-gnu".
+For bug reporting instructions, please see:
+<http://www.gnu.org/software/gdb/bugs/>...
+Reading symbols from /home/guo/miparcours/pipeline/linux-3.6.10/kernel/workqueue.o...done.
+(gdb) 0x2a54 is in __queue_work (kernel/workqueue.c:963).
+958			struct worker *worker;
+959			struct hlist_node *pos;
+960			int i;
+961	
+962			spin_lock_irqsave(&gcwq->lock, flags);
+963			for_each_busy_worker(worker, i, pos, gcwq) {
+964				if (worker->task != current)
+965					continue;
+966				spin_unlock_irqrestore(&gcwq->lock, flags);
+967				/*
+(gdb) quit

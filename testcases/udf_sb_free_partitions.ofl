@@ -1,0 +1,22 @@
+GNU gdb (GDB) 7.4.1-debian
+Copyright (C) 2012 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.  Type "show copying"
+and "show warranty" for details.
+This GDB was configured as "x86_64-linux-gnu".
+For bug reporting instructions, please see:
+<http://www.gnu.org/software/gdb/bugs/>...
+Reading symbols from /home/guo/miparcours/pipeline/linux-3.7.5/fs/udf/super.o...done.
+(gdb) 0x998 is in udf_sb_free_partitions (fs/udf/super.c:292).
+287			udf_sb_free_bitmap(map->s_uspace.s_bitmap);
+288		if (map->s_partition_flags & UDF_PART_FLAG_FREED_BITMAP)
+289			udf_sb_free_bitmap(map->s_fspace.s_bitmap);
+290		if (map->s_partition_type == UDF_SPARABLE_MAP15)
+291			for (i = 0; i < 4; i++)
+292				brelse(map->s_type_specific.s_sparing.s_spar_map[i]);
+293		else if (map->s_partition_type == UDF_METADATA_MAP25) {
+294			mdata = &map->s_type_specific.s_metadata;
+295			iput(mdata->s_metadata_fe);
+296			mdata->s_metadata_fe = NULL;
+(gdb) quit

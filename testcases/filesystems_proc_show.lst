@@ -1,0 +1,52 @@
+GNU gdb (GDB) 7.4.1-debian
+Copyright (C) 2012 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+(gdb) Dump of assembler code for function filesystems_proc_show:
+222	{
+   0x000000f3 <+0>:	push   %esi
+   0x000000f4 <+1>:	mov    %eax,%esi
+   0x000000f6 <+3>:	push   %ebx
+
+223		struct file_system_type * tmp;
+224	
+225		read_lock(&file_systems_lock);
+   0x000000f7 <+4>:	mov    $0x0,%eax
+   0x000000fc <+9>:	call   0xfd <filesystems_proc_show+10>
+
+226		tmp = file_systems;
+   0x00000101 <+14>:	mov    0x0,%ebx
+
+227		while (tmp) {
+   0x00000107 <+20>:	jmp    0x12e <filesystems_proc_show+59>
+   0x0000012e <+59>:	test   %ebx,%ebx
+   0x00000130 <+61>:	jne    0x109 <filesystems_proc_show+22>
+
+228			seq_printf(m, "%s\t%s\n",
+   0x00000109 <+22>:	testb  $0x1,0x4(%ebx)
+   0x0000010d <+26>:	mov    $0xd,%eax
+   0x00000112 <+31>:	pushl  (%ebx)
+   0x00000114 <+33>:	mov    $0xc,%edx
+   0x00000119 <+38>:	cmove  %eax,%edx
+   0x0000011c <+41>:	push   %edx
+   0x0000011d <+42>:	push   $0x13
+   0x00000122 <+47>:	push   %esi
+   0x00000123 <+48>:	call   0x124 <filesystems_proc_show+49>
+
+229				(tmp->fs_flags & FS_REQUIRES_DEV) ? "" : "nodev",
+230				tmp->name);
+231			tmp = tmp->next;
+   0x00000128 <+53>:	mov    0x14(%ebx),%ebx
+   0x0000012b <+56>:	add    $0x10,%esp
+
+232		}
+233		read_unlock(&file_systems_lock);
+234		return 0;
+235	}
+   0x0000013c <+73>:	xor    %eax,%eax
+   0x0000013e <+75>:	pop    %ebx
+   0x0000013f <+76>:	pop    %esi
+   0x00000140 <+77>:	ret    
+
+End of assembler dump.
+(gdb) quit
+

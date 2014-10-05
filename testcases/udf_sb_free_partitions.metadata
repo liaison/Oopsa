@@ -1,0 +1,8 @@
+
+URL:
+http://oops.kernel.org/oops/bug-unable-to-handle-kernel-null-pointer-dereference-at-udf_sb_free_partitions-4/
+
+SRC:
+https://git.kernel.org/cgit/linux/kernel/git/stable/linux-stable.git/tree/fs/udf/super.c?id=v3.7.5#n306
+
+

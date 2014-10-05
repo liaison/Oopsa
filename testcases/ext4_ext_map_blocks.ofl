@@ -1,0 +1,22 @@
+GNU gdb (GDB) 7.4.1-debian
+Copyright (C) 2012 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.  Type "show copying"
+and "show warranty" for details.
+This GDB was configured as "x86_64-linux-gnu".
+For bug reporting instructions, please see:
+<http://www.gnu.org/software/gdb/bugs/>...
+Reading symbols from /home/guo/miparcours/pipeline/linux-3.7.2/fs/ext4/extents.o...done.
+(gdb) 0x3af3 is in ext4_ext_map_blocks (include/linux/jump_label.h:150).
+145		struct static_key  key;
+146	};
+147	
+148	static __always_inline bool static_key_false(struct static_key *key)
+149	{
+150		if (unlikely(atomic_read(&key->enabled)) > 0)
+151			return true;
+152		return false;
+153	}
+154	
+(gdb) quit

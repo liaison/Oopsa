@@ -1,0 +1,57 @@
+BUG: unable to handle kernel NULL pointer dereference at 000000000000007e
+IP: [<ffffffffa0ab58ef>] udl_get_modes+0x11f/0x1a0 [udl]
+PGD 0 
+Oops: 0000 [#1] SMP 
+Modules linked in: udl(+) drm_usb snd_usb_audio snd_usbmidi_lib snd_rawmidi michael_mic arc4 ebtable_nat fuse nf_conntrack_netbios_ns nf_conntrack_broadcast ipt_MASQUERADE be2iscsi iscsi_boot_sysfs bnx2i cnic uio cxgb4i cxgb4 cxgb3i cxgb3 mdio libcxgbi ib_iser rdma_cm ib_addr iw_cm ib_cm ib_sa ib_mad ib_core iscsi_tcp libiscsi_tcp libiscsi scsi_transport_iscsi ip6table_mangle ip6t_REJECT nf_conntrack_ipv6 nf_defrag_ipv6 iptable_nat nf_nat_ipv4 nf_nat iptable_mangle nf_conntrack_ipv4 nf_defrag_ipv4 xt_conntrack nf_conntrack rfcomm bnep ebtable_filter ebtables ip6table_filter ip6_tables btrfs libcrc32c zlib_deflate uvcvideo videobuf2_vmalloc videobuf2_memops videobuf2_core videodev media btusb bluetooth snd_hda_codec_hdmi snd_hda_codec_idt snd_hda_intel snd_hda_codec snd_hwdep snd_seq snd_seq_device snd_pcm lib80211_crypt_tkip wl(POF) snd_page_alloc snd_timer cfg80211 snd soundcore mei iTCO_wdt lib80211 hp_accel tpm_tis vboxnetadp(OF) serio_raw ppdev parport_pc iTCO_vendor_support lpc_ich mfd_core lis3lv02d input_polldev vboxnetflt(OF) parport tpm_infineon tpm tpm_bios coretemp joydev hp_wmi sparse_keymap rfkill microcode vboxdrv(OF) vhost_net tun macvtap macvlan kvm_intel binfmt_misc kvm uinput dm_crypt i915 crc32c_intel ghash_clmulni_intel i2c_algo_bit sdhci_pci drm_kms_helper drm sdhci firewire_ohci mmc_core e1000e i2c_core firewire_core crc_itu_t wmi video sunrpc
+CPU 3 
+Pid: 2369, comm: systemd-udevd Tainted: PF        C O 3.7.6-201.fc18.x86_64 #1 Hewlett-Packard HP ProBook 6470b/179C
+RIP: 0010:[<ffffffffa0ab58ef>]  [<ffffffffa0ab58ef>] udl_get_modes+0x11f/0x1a0 [udl]
+RSP: 0018:ffff88020ee37a98  EFLAGS: 00010292
+RAX: ffff88022e589501 RBX: 000000000000004c RCX: 00000001820001e3
+RDX: 00000001820001e4 RSI: 00000000820001e3 RDI: ffff880237002400
+RBP: ffff88020ee37ae8 R08: 0000000000000000 R09: ffff880237002400
+R10: 0000000000000000 R11: 00000000000003ff R12: 0000000000000000
+R13: ffff88020ef84008 R14: ffff88022f088000 R15: ffff88022e589530
+FS:  00007f13c6a14840(0000) GS:ffff88023fac0000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000000000000007e CR3: 000000020eeda000 CR4: 00000000001407e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000ffff0ff0 DR7: 0000000000000400
+Process systemd-udevd
+Stack:
+ ffff88022e589530 ffff880200000002 ffff8802000003e8 ffff88020ef84000
+ ffff88020ef84000 ffff88022f0882c8 0000000000000000 ffff88020ef84800
+ ffff88022f088000 0000000000000800 ffff88020ee37b38 ffffffffa0160711
+Call Trace:
+ [<ffffffffa0160711>] drm_helper_probe_single_connector_modes+0x2c1/0x340 [drm_kms_helper]
+ [<ffffffffa015dee0>] drm_fb_helper_probe_connector_modes.isra.2+0x50/0x70 [drm_kms_helper]
+ [<ffffffffa015f523>] drm_fb_helper_initial_config+0x1a3/0x230 [drm_kms_helper]
+ [<ffffffff8118061d>] ? __kmalloc+0x14d/0x1a0
+ [<ffffffffa0116bfb>] ? drm_sysfs_hotplug_event+0x5b/0x70 [drm]
+ [<ffffffffa015e24e>] ? drm_fb_helper_init+0xfe/0x200 [drm_kms_helper]
+ [<ffffffff8118079f>] ? kmem_cache_alloc_trace+0x12f/0x160
+ [<ffffffffa015e397>] ? drm_fb_helper_single_add_all_connectors+0x47/0xf0 [drm_kms_helper]
+ [<ffffffffa015e397>] ? drm_fb_helper_single_add_all_connectors+0x47/0xf0 [drm_kms_helper]
+ [<ffffffffa0ab6ffc>] udl_fbdev_init+0x8c/0xc0 [udl]
+ [<ffffffffa0ab60ec>] udl_driver_load+0x2bc/0x490 [udl]
+ [<ffffffffa0a86244>] drm_get_usb_dev+0x154/0xf10 [drm_usb]
+ [<ffffffff813df240>] ? __pm_runtime_set_status+0x140/0x210
+ [<ffffffffa0ab5065>] udl_usb_probe+0x15/0x20 [udl]
+ [<ffffffff81452581>] usb_probe_interface+0x1b1/0x2b0
+ [<ffffffff813d345b>] driver_probe_device+0x8b/0x390
+ [<ffffffff813d380b>] __driver_attach+0xab/0xb0
+ [<ffffffff813d3760>] ? driver_probe_device+0x390/0x390
+ [<ffffffff813d14e5>] bus_for_each_dev+0x55/0x90
+ [<ffffffff813d2dce>] driver_attach+0x1e/0x20
+ [<ffffffff813d2a00>] bus_add_driver+0x1a0/0x290
+ [<ffffffff813d3ed7>] driver_register+0x77/0x170
+ [<ffffffff81450e2d>] usb_register_driver+0x8d/0x160
+ [<ffffffffa0a860d9>] drm_usb_init+0x79/0x90 [drm_usb]
+ [<ffffffffa0abd000>] ? 0xffffffffa0abcfff
+ [<ffffffffa0abd017>] udl_init+0x17/0x1000 [udl]
+ [<ffffffff8100216a>] do_one_initcall+0x12a/0x180
+ [<ffffffff810c2d20>] sys_init_module+0xc0/0x220
+ [<ffffffff8163f2d9>] system_call_fastpath+0x16/0x1b
+Code: c1 89 da 48 c7 c6 28 87 ab a0 48 c7 c7 fe 81 ab a0 31 c0 e8 44 d6 65 ff 4c 89 e7 45 31 e4 e8 69 a0 6c e0 4c 89 ff e8 61 a0 6c e0 <41> 0f b6 44 24 7e 4c 89 e6 4c 89 f7 41 00 44 24 7f 41 c6 44 24 
+RIP  [<ffffffffa0ab58ef>] udl_get_modes+0x11f/0x1a0 [udl]
+ RSP <ffff88020ee37a98>

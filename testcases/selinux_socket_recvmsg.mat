@@ -1,0 +1,59 @@
+Source_Sequence:
+[0]:	0x0000000000000317 <+0> mov    0x20(%rdi),%rsi
+[1]:	0x000000000000031b <+4> mov    $0x2,%edx
+[2]:	0x0000000000000329 <+18> mov    %rax,%rdi
+[3]:	0x000000000000032c <+21> jmpq   0x212 <sock_has_perm>
+
+Query_Sequence:
+[0]:	data32 data32 data32 xchg %ax,%ax
+[1]:	push   %rbp
+[0]:	mov    0x20(%rdi),%rsi     <-- trapping instruction
+[1]:	mov    $0x2,%edx
+[2]:	mov    %gs:0xc700,%rax
+[3]:	mov    %rsp,%rbp
+
+Anchor_List:
+[0]:	mov    0x20(%rdi),%rsi
+Left Match======>
+Anchor: 0, Score: -2, Match: 0, Mismatch: 0, Gap: 2
+---	<->	data32 data32 data32 xchg %ax,%ax
+---	<->	push   %rbp
+
+Right Match======>
+Anchor: 0, Score: 5, Match: 2, Mismatch: 0, Gap: 1
+mov    $0x2,%edx	<->	mov    $0x2,%edx
+mov    %rax,%rdi	<->	mov    %gs:0xc700,%rax
+---	<->	mov    %rsp,%rbp
+
+Total Match===========>
+Anchor: 0, Score: 7, Match: 3, Mismatch: 0, Gap: 3
+---	<->	data32 data32 data32 xchg %ax,%ax
+---	<->	push   %rbp
+mov    0x20(%rdi),%rsi	<->	mov    0x20(%rdi),%rsi     <-- trapping instruction
+mov    $0x2,%edx	<->	mov    $0x2,%edx
+mov    %rax,%rdi	<->	mov    %gs:0xc700,%rax
+---	<->	mov    %rsp,%rbp
+
+**********************
+Score List:
+Anchor: 0	Score: 7,	Confidence: 0.666667, Match: 3, Mismatch: 0, Gap: 3
+
+Best Match Anchor: 0, Score: 7, Match: 3, Mismatch: 0, Gap: 3
+---	<->	data32 data32 data32 xchg %ax,%ax
+---	<->	push   %rbp
+mov    0x20(%rdi),%rsi	<->	mov    0x20(%rdi),%rsi     <-- trapping instruction
+mov    $0x2,%edx	<->	mov    $0x2,%edx
+mov    %rax,%rdi	<->	mov    %gs:0xc700,%rax
+---	<->	mov    %rsp,%rbp
+
+Relative Confidence: 0.000000
+
+Best_Match_Index: 0, Score: 7, Match: 3, Mismatch: 0, Gap: 3
+Offending_Line:
+
+3988:{
+3989:return sock_has_perm(current, sock->sk, SOCKET__READ);
+[0]:	0x0000000000000317 <+0> mov    0x20(%rdi),%rsi
+[1]:	0x000000000000031b <+4> mov    $0x2,%edx
+[2]:	0x0000000000000329 <+18> mov    %rax,%rdi
+[3]:	0x000000000000032c <+21> jmpq   0x212 <sock_has_perm>

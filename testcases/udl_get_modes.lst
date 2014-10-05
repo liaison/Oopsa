@@ -1,0 +1,234 @@
+GNU gdb (GDB) 7.4.1-debian
+Copyright (C) 2012 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.  Type "show copying"
+and "show warranty" for details.
+This GDB was configured as "x86_64-linux-gnu".
+For bug reporting instructions, please see:
+<http://www.gnu.org/software/gdb/bugs/>...
+Reading symbols from /home/guo/miparcours/pipeline/linux-3.7.6/drivers/gpu/drm/udl/udl_connector.o...done.
+(gdb) Dump of assembler code for function udl_get_modes:
+29		if (block == NULL)
+   0x00000000000000ad <+54>:	test   %rax,%rax
+   0x00000000000000b0 <+57>:	je     0x175 <udl_get_modes+254>
+
+30			return NULL;
+31	
+32		rbuf = kmalloc(2, GFP_KERNEL);
+33		if (rbuf == NULL)
+   0x00000000000000cc <+85>:	test   %rax,%rax
+   0x00000000000000d2 <+91>:	je     0x163 <udl_get_modes+236>
+   0x00000000000000d8 <+97>:	xor    %ebp,%ebp
+
+34			goto error;
+35	
+36		for (i = 0; i < EDID_LENGTH; i++) {
+   0x0000000000000150 <+217>:	cmp    $0x80,%rbp
+   0x0000000000000157 <+224>:	jne    0xda <udl_get_modes+99>
+
+37			ret = usb_control_msg(udl->ddev->usbdev,
+   0x00000000000000dd <+102>:	mov    %ebp,%r8d
+   0x00000000000000e0 <+105>:	mov    $0xa1,%r9d
+   0x00000000000000e6 <+111>:	shl    $0x8,%r8d
+   0x00000000000000ea <+115>:	mov    $0xc0,%ecx
+   0x00000000000000ef <+120>:	mov    $0x2,%edx
+   0x00000000000000f4 <+125>:	and    $0xff00,%r8d
+   0x0000000000000104 <+141>:	movl   $0xfa,0x10(%rsp)
+   0x000000000000010c <+149>:	movl   $0x2,0x8(%rsp)
+   0x0000000000000114 <+157>:	mov    %r12,(%rsp)
+   0x000000000000011b <+164>:	or     $0x80000080,%esi
+   0x0000000000000121 <+170>:	callq  0x126 <udl_get_modes+175>
+
+38					      usb_rcvctrlpipe(udl->ddev->usbdev, 0), (0x02),
+   0x00000000000000da <+99>:	mov    (%r14),%rax
+   0x00000000000000fb <+132>:	mov    0x318(%rax),%rdi
+
+39					      (0x80 | (0x02 << 5)), i << 8, 0xA1, rbuf, 2,
+40					      HZ);
+41			if (ret < 1) {
+   0x0000000000000126 <+175>:	test   %eax,%eax
+   0x0000000000000128 <+177>:	jg     0x145 <udl_get_modes+206>
+
+42				DRM_ERROR("Read EDID byte %d failed err %x\n", i, ret);
+   0x000000000000012a <+179>:	mov    %eax,%ecx
+   0x000000000000012c <+181>:	mov    %ebp,%edx
+   0x000000000000012e <+183>:	mov    $0x0,%rsi
+   0x0000000000000135 <+190>:	mov    $0x0,%rdi
+   0x000000000000013c <+197>:	xor    %eax,%eax
+   0x000000000000013e <+199>:	callq  0x143 <udl_get_modes+204>
+   0x0000000000000143 <+204>:	jmp    0x163 <udl_get_modes+236>
+
+43				goto error;
+44			}
+45			block[i] = rbuf[1];
+   0x0000000000000145 <+206>:	mov    0x1(%r12),%al
+   0x000000000000014a <+211>:	mov    %al,(%rbx,%rbp,1)
+   0x000000000000014d <+214>:	inc    %rbp
+
+46		}
+47	
+48		kfree(rbuf);
+   0x0000000000000159 <+226>:	mov    %r12,%rdi
+   0x000000000000015c <+229>:	callq  0x161 <udl_get_modes+234>
+   0x0000000000000161 <+234>:	jmp    0x175 <udl_get_modes+254>
+
+49		return block;
+50	
+51	error:
+52		kfree(block);
+   0x0000000000000163 <+236>:	mov    %rbx,%rdi
+   0x0000000000000168 <+241>:	callq  0x16d <udl_get_modes+246>
+
+53		kfree(rbuf);
+   0x000000000000016d <+246>:	mov    %r12,%rdi
+   0x0000000000000170 <+249>:	callq  0x175 <udl_get_modes+254>
+
+54		return NULL;
+   0x0000000000000166 <+239>:	xor    %ebx,%ebx
+
+55	}
+56	
+57	static int udl_get_modes(struct drm_connector *connector)
+58	{
+   0x0000000000000077 <+0>:	push   %r14
+   0x0000000000000083 <+12>:	push   %r13
+   0x0000000000000085 <+14>:	mov    %rdi,%r13
+   0x0000000000000088 <+17>:	push   %r12
+   0x000000000000008a <+19>:	push   %rbp
+   0x000000000000008b <+20>:	push   %rbx
+   0x000000000000008c <+21>:	sub    $0x30,%rsp
+
+59		struct udl_device *udl = connector->dev->dev_private;
+   0x0000000000000090 <+25>:	mov    (%rdi),%rax
+
+60		struct edid *edid;
+61		int ret;
+62	
+63		edid = (struct edid *)udl_get_edid(udl);
+64	
+65		/*
+66		 * We only read the main block, but if the monitor reports extension
+67		 * blocks then the drm edid code expects them to be present, so patch
+68		 * the extension count to 0.
+69		 */
+70		edid->checksum += edid->extensions;
+   0x0000000000000175 <+254>:	mov    0x7e(%rbx),%al
+   0x0000000000000178 <+257>:	add    %al,0x7f(%rbx)
+
+71		edid->extensions = 0;
+   0x0000000000000181 <+266>:	movb   $0x0,0x7e(%rbx)
+
+72	
+73		drm_mode_connector_update_edid_property(connector, edid);
+   0x000000000000017b <+260>:	mov    %rbx,%rsi
+   0x000000000000017e <+263>:	mov    %r13,%rdi
+   0x0000000000000185 <+270>:	callq  0x18a <udl_get_modes+275>
+
+74		ret = drm_add_edid_modes(connector, edid);
+   0x000000000000018a <+275>:	mov    %rbx,%rsi
+   0x000000000000018d <+278>:	mov    %r13,%rdi
+   0x0000000000000190 <+281>:	callq  0x195 <udl_get_modes+286>
+
+75		kfree(edid);
+   0x0000000000000195 <+286>:	mov    %rbx,%rdi
+   0x0000000000000198 <+289>:	mov    %eax,0x28(%rsp)
+   0x000000000000019c <+293>:	callq  0x1a1 <udl_get_modes+298>
+
+76		return ret;
+77	}
+   0x00000000000001a1 <+298>:	mov    0x28(%rsp),%eax
+   0x00000000000001a5 <+302>:	add    $0x30,%rsp
+   0x00000000000001a9 <+306>:	pop    %rbx
+   0x00000000000001aa <+307>:	pop    %rbp
+   0x00000000000001ab <+308>:	pop    %r12
+   0x00000000000001ad <+310>:	pop    %r13
+   0x00000000000001af <+312>:	pop    %r14
+   0x00000000000001b1 <+314>:	retq   
+
+78	
+79	static int udl_mode_valid(struct drm_connector *connector,
+80				  struct drm_display_mode *mode)
+81	{
+82		struct udl_device *udl = connector->dev->dev_private;
+83		if (!udl->sku_pixel_limit)
+84			return 0;
+85	
+86		if (mode->vdisplay * mode->hdisplay > udl->sku_pixel_limit)
+87			return MODE_VIRTUAL_Y;
+88	
+89		return 0;
+90	}
+91	
+92	static enum drm_connector_status
+93	udl_detect(struct drm_connector *connector, bool force)
+94	{
+95		if (drm_device_is_unplugged(connector->dev))
+96			return connector_status_disconnected;
+97		return connector_status_connected;
+98	}
+99	
+100	struct drm_encoder *udl_best_single_encoder(struct drm_connector *connector)
+101	{
+102		int enc_id = connector->encoder_ids[0];
+103		struct drm_mode_object *obj;
+104		struct drm_encoder *encoder;
+105	
+106		obj = drm_mode_object_find(connector->dev, enc_id, DRM_MODE_OBJECT_ENCODER);
+107		if (!obj)
+108			return NULL;
+109		encoder = obj_to_encoder(obj);
+110		return encoder;
+111	}
+112	
+113	int udl_connector_set_property(struct drm_connector *connector, struct drm_property *property,
+114				       uint64_t val)
+115	{
+116		return 0;
+117	}
+118	
+119	static void udl_connector_destroy(struct drm_connector *connector)
+120	{
+121		drm_sysfs_connector_remove(connector);
+122		drm_connector_cleanup(connector);
+123		kfree(connector);
+124	}
+125	
+126	struct drm_connector_helper_funcs udl_connector_helper_funcs = {
+127		.get_modes = udl_get_modes,
+128		.mode_valid = udl_mode_valid,
+129		.best_encoder = udl_best_single_encoder,
+130	};
+131	
+132	struct drm_connector_funcs udl_connector_funcs = {
+133		.dpms = drm_helper_connector_dpms,
+134		.detect = udl_detect,
+135		.fill_modes = drm_helper_probe_single_connector_modes,
+136		.destroy = udl_connector_destroy,
+137		.set_property = udl_connector_set_property,
+138	};
+139	
+140	int udl_connector_init(struct drm_device *dev, struct drm_encoder *encoder)
+141	{
+142		struct drm_connector *connector;
+143	
+144		connector = kzalloc(sizeof(struct drm_connector), GFP_KERNEL);
+145		if (!connector)
+146			return -ENOMEM;
+147	
+148		drm_connector_init(dev, connector, &udl_connector_funcs, DRM_MODE_CONNECTOR_DVII);
+149		drm_connector_helper_add(connector, &udl_connector_helper_funcs);
+150	
+151		drm_sysfs_connector_add(connector);
+152		drm_mode_connector_attach_encoder(connector, encoder);
+153	
+154		drm_connector_attach_property(connector,
+155					      dev->mode_config.dirty_info_property,
+156					      1);
+157		return 0;
+158	}
+   0x000000000000009a <+35>:	mov    0x330(%rax),%r14
+   0x00000000000000a9 <+50>:	add    $0x8,%r14
+
+End of assembler dump.
+(gdb) quit

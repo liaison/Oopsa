@@ -1,0 +1,22 @@
+GNU gdb (GDB) 7.4.1-debian
+Copyright (C) 2012 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.  Type "show copying"
+and "show warranty" for details.
+This GDB was configured as "x86_64-linux-gnu".
+For bug reporting instructions, please see:
+<http://www.gnu.org/software/gdb/bugs/>...
+Reading symbols from /home/guo/miparcours/pipeline/linux-3.7.2/fs/fat/fatent.o...done.
+(gdb) 0x714 is in fat_ent_bread (fs/fat/fatent.c:108).
+103				 int offset, sector_t blocknr)
+104	{
+105		struct fatent_operations *ops = MSDOS_SB(sb)->fatent_ops;
+106	
+107		WARN_ON(blocknr < MSDOS_SB(sb)->fat_start);
+108		fatent->fat_inode = MSDOS_SB(sb)->fat_inode;
+109		fatent->bhs[0] = sb_bread(sb, blocknr);
+110		if (!fatent->bhs[0]) {
+111			fat_msg(sb, KERN_ERR, "FAT read failed (blocknr %llu)",
+112			       (llu)blocknr);
+(gdb) quit

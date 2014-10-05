@@ -1,0 +1,33 @@
+general protection fault: 0000 [#1] SMP 
+Modules linked in: usb_storage fuse ip6table_filter ip6_tables ebtable_nat ebtables ipt_MASQUERADE nf_nat nf_conntrack_ipv4 nf_defrag_ipv4 xt_state nf_conntrack xt_CHECKSUM lockd sunrpc bnep bluetooth bridge stp llc be2iscsi iscsi_boot_sysfs bnx2i cnic uio cxgb4i cxgb4 cxgb3i cxgb3 mdio libcxgbi ib_iser rdma_cm ib_addr iw_cm ib_cm ib_sa ib_mad ib_core iscsi_tcp libiscsi_tcp libiscsi scsi_transport_iscsi arc4 snd_hda_codec_realtek ath9k ath9k_common snd_hda_intel ath9k_hw snd_hda_codec snd_hwdep r8169 ath mac80211 snd_seq snd_seq_device eeepc_wmi asus_wmi cfg80211 snd_pcm mei iTCO_wdt iTCO_vendor_support lpc_ich i2c_i801 mfd_core sparse_keymap serio_raw coretemp rfkill joydev snd_page_alloc snd_timer snd mii soundcore microcode ppdev parport_pc parport vhost_net tun macvtap macvlan kvm_intel kvm uinput binfmt_misc crc32c_intel ghash_clmulni_intel wmi i915 video i2c_algo_bit drm_kms_helper drm i2c_core [last unloaded: iptable_mangle]
+CPU 0 
+Pid: 15260, comm: mount.ntfs Not tainted 3.6.11-1.fc17.x86_64 #1 System manufacturer System Product Name/P8H61-M LE
+RIP: 0010:[<ffffffff8117a638>]  [<ffffffff8117a638>] kmem_cache_alloc+0x58/0x160
+RSP: 0018:ffff88002659fca8  EFLAGS: 00010246
+RAX: 0000000000000000 RBX: 0000000000000001 RCX: 0000000000000001
+RDX: 0000000001e3ae17 RSI: 00000000000080d0 RDI: ffff880139ba6800
+RBP: ffff88002659fce8 R08: 0000000000017990 R09: 0000000000000000
+R10: ffff88003661ba00 R11: 0000000000000001 R12: ff8b8800178e9f00
+R13: 00000000000080d0 R14: ffff880139ba6800 R15: ffffffff811cef58
+FS:  00007f021a473740(0000) GS:ffff88013fa00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00000000e1849000 CR3: 000000002660b000 CR4: 00000000000427f0
+DR0: 00000000000000a0 DR1: 0000000000000000 DR2: 0000000000000003
+DR3: 00000000000000b0 DR6: 00000000ffff0ff0 DR7: 0000000000000400
+Process mount.ntfs
+Stack:
+ ffff88002659fe00 ffff88002659fdf0 ffff88002659fd58 0000000000000001
+ ffff880139b86300 ffff88009af480f8 0000000000000002 ffff8801338c1d10
+ ffff88002659fd48 ffffffff811cef58 ffff88002659fcf8 ffff88002659fcf8
+Call Trace:
+ [<ffffffff811cef58>] fsnotify_create_event+0x48/0x1a0
+ [<ffffffff811ce192>] send_to_group+0x1b2/0x250
+ [<ffffffff811c6c2a>] ? blkdev_aio_write+0x9a/0xf0
+ [<ffffffff811ce535>] fsnotify+0x305/0x340
+ [<ffffffff811ce74c>] __fsnotify_parent+0xac/0x100
+ [<ffffffff8119025c>] vfs_write+0xec/0x180
+ [<ffffffff811906d2>] sys_pwrite64+0x92/0xb0
+ [<ffffffff81627329>] system_call_fastpath+0x16/0x1b
+Code: 6f 39 4a 00 4d 8b 06 65 4c 03 04 25 c8 db 00 00 49 8b 50 08 4d 8b 20 4d 85 e4 0f 84 a8 00 00 00 49 63 46 20 4d 8b 06 41 f6 c0 0f <49> 8b 1c 04 0f 85 d2 00 00 00 48 8d 4a 01 4c 89 e0 65 49 0f c7 
+RIP  [<ffffffff8117a638>] kmem_cache_alloc+0x58/0x160
+ RSP <ffff88002659fca8>

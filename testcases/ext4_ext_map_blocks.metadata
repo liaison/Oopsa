@@ -1,0 +1,7 @@
+
+URL:
+http://oops.kernel.org/oops/kernel-paging-request-at-ext4_ext_map_blocks/
+
+SRC:
+https://git.kernel.org/cgit/linux/kernel/git/stable/linux-stable.git/tree/fs/ext4/extents.c?id=v3.7.2#n3907
+

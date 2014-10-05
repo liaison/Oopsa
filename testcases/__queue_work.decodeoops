@@ -1,0 +1,28 @@
+Code: e8 a0 8c 5a 00 48 89 45 c8 41 8b 7e 04 4c 89 ee e8 00 ce ff ff 49 89 c5 66 66 66 66 90 48 8d 43 08 48 39 43 08 0f 85 75 02 00 00 <45> 8b 65 10 49 63 c4 45 89 e7 41 83 44 85 18 01 41 c1 e7 04 41
+All code
+========
+   0:	e8 a0 8c 5a 00       	callq  0x5a8ca5
+   5:	48 89 45 c8          	mov    %rax,-0x38(%rbp)
+   9:	41 8b 7e 04          	mov    0x4(%r14),%edi
+   d:	4c 89 ee             	mov    %r13,%rsi
+  10:	e8 00 ce ff ff       	callq  0xffffffffffffce15
+  15:	49 89 c5             	mov    %rax,%r13
+  18:	66 66 66 66 90       	data32 data32 data32 xchg %ax,%ax
+  1d:	48 8d 43 08          	lea    0x8(%rbx),%rax
+  21:	48 39 43 08          	cmp    %rax,0x8(%rbx)
+  25:	0f 85 75 02 00 00    	jne    0x2a0
+  2b:*	45 8b 65 10          	mov    0x10(%r13),%r12d     <-- trapping instruction
+  2f:	49 63 c4             	movslq %r12d,%rax
+  32:	45 89 e7             	mov    %r12d,%r15d
+  35:	41 83 44 85 18 01    	addl   $0x1,0x18(%r13,%rax,4)
+  3b:	41 c1 e7 04          	shl    $0x4,%r15d
+  3f:	41                   	rex.B
+
+Code starting with the faulting instruction
+===========================================
+   0:	45 8b 65 10          	mov    0x10(%r13),%r12d
+   4:	49 63 c4             	movslq %r12d,%rax
+   7:	45 89 e7             	mov    %r12d,%r15d
+   a:	41 83 44 85 18 01    	addl   $0x1,0x18(%r13,%rax,4)
+  10:	41 c1 e7 04          	shl    $0x4,%r15d
+  14:	41                   	rex.B

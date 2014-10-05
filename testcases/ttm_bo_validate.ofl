@@ -1,0 +1,22 @@
+GNU gdb (GDB) 7.4.1-debian
+Copyright (C) 2012 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.  Type "show copying"
+and "show warranty" for details.
+This GDB was configured as "x86_64-linux-gnu".
+For bug reporting instructions, please see:
+<http://www.gnu.org/software/gdb/bugs/>...
+Reading symbols from /home/guo/miparcours/pipeline/linux-3.7.6/drivers/gpu/drm/ttm/ttm_bo.o...done.
+(gdb) 0x1d0e is in ttm_bo_validate (drivers/gpu/drm/ttm/ttm_bo.c:1111).
+1106	static int ttm_bo_mem_compat(struct ttm_placement *placement,
+1107				     struct ttm_mem_reg *mem)
+1108	{
+1109		int i;
+1110	
+1111		if (mem->mm_node && placement->lpfn != 0 &&
+1112		    (mem->start < placement->fpfn ||
+1113		     mem->start + mem->num_pages > placement->lpfn))
+1114			return -1;
+1115	
+(gdb) quit

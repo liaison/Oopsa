@@ -1,0 +1,121 @@
+GNU gdb (GDB) 7.4.1-debian
+Copyright (C) 2012 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.  Type "show copying"
+and "show warranty" for details.
+This GDB was configured as "x86_64-linux-gnu".
+For bug reporting instructions, please see:
+<http://www.gnu.org/software/gdb/bugs/>...
+Reading symbols from /home/guo/miparcours/pipeline/linux-3.6.11/vmlinux...done.
+(gdb) Dump of assembler code for function unlink_anon_vmas:
+373	{
+   0xffffffff810cd6b1 <+0>:	push   %r15
+   0xffffffff810cd6b6 <+5>:	push   %r14
+   0xffffffff810cd6bc <+11>:	push   %r13
+   0xffffffff810cd6be <+13>:	push   %r12
+   0xffffffff810cd6c0 <+15>:	push   %rbp
+   0xffffffff810cd6c1 <+16>:	mov    %rdi,%rbp
+   0xffffffff810cd6c4 <+19>:	push   %rbx
+   0xffffffff810cd6c5 <+20>:	push   %rax
+
+374		struct anon_vma_chain *avc, *next;
+375		struct anon_vma *root = NULL;
+   0xffffffff810cd6b3 <+2>:	xor    %r15d,%r15d
+
+376	
+377		/*
+378		 * Unlink each anon_vma chained to the VMA.  This list is ordered
+379		 * from newest to oldest, ensuring the root anon_vma gets freed last.
+380		 */
+381		list_for_each_entry_safe(avc, next, &vma->anon_vma_chain, same_vma) {
+   0xffffffff810cd6b8 <+7>:	lea    0x70(%rdi),%r14
+   0xffffffff810cd6c6 <+21>:	mov    0x70(%rdi),%rax
+   0xffffffff810cd6ca <+25>:	mov    (%rax),%r12
+   0xffffffff810cd6cd <+28>:	lea    -0x10(%rax),%rbx
+   0xffffffff810cd6d1 <+32>:	sub    $0x10,%r12
+   0xffffffff810cd6d5 <+36>:	jmpq   0xffffffff810cd761 <unlink_anon_vmas+176>
+   0xffffffff810cd755 <+164>:	mov    0x10(%r12),%rax
+   0xffffffff810cd75a <+169>:	mov    %r12,%rbx
+   0xffffffff810cd75d <+172>:	lea    -0x10(%rax),%r12
+   0xffffffff810cd761 <+176>:	lea    0x10(%rbx),%rax
+   0xffffffff810cd765 <+180>:	cmp    %rax,%r14
+   0xffffffff810cd768 <+183>:	jne    0xffffffff810cd6da <unlink_anon_vmas+41>
+
+382			struct anon_vma *anon_vma = avc->anon_vma;
+   0xffffffff810cd6da <+41>:	mov    0x8(%rbx),%r13
+
+383	
+384			root = lock_anon_vma_root(root, anon_vma);
+   0xffffffff810cd6de <+45>:	mov    %r15,%rdi
+   0xffffffff810cd6e1 <+48>:	mov    0x0(%r13),%rsi
+   0xffffffff810cd6e5 <+52>:	callq  0xffffffff810cc6a6 <lock_anon_vma_root>
+   0xffffffff810cd6ee <+61>:	mov    %rax,%r15
+
+385			list_del(&avc->same_anon_vma);
+386	
+387			/*
+388			 * Leave empty anon_vmas on the list - we'll need
+389			 * to free them outside the lock.
+390			 */
+391			if (list_empty(&anon_vma->head))
+   0xffffffff810cd718 <+103>:	lea    0x30(%r13),%rax
+   0xffffffff810cd71c <+107>:	cmp    %rax,0x30(%r13)
+   0xffffffff810cd720 <+111>:	je     0xffffffff810cd755 <unlink_anon_vmas+164>
+
+392				continue;
+393	
+394			list_del(&avc->same_vma);
+395			anon_vma_chain_free(avc);
+   0xffffffff810cd72a <+121>:	mov    %rbx,%rdi
+   0xffffffff810cd750 <+159>:	callq  0xffffffff810cc5c3 <anon_vma_chain_free>
+
+396		}
+397		unlock_anon_vma_root(root);
+   0xffffffff810cd76e <+189>:	mov    %r15,%rdi
+   0xffffffff810cd771 <+192>:	callq  0xffffffff810cc5b4 <unlock_anon_vma_root>
+
+398	
+399		/*
+400		 * Iterate the list once more, it now only contains empty and unlinked
+401		 * anon_vmas, destroy them. Could not do before due to __put_anon_vma()
+402		 * needing to acquire the anon_vma->root->mutex.
+403		 */
+404		list_for_each_entry_safe(avc, next, &vma->anon_vma_chain, same_vma) {
+   0xffffffff810cd776 <+197>:	mov    0x70(%rbp),%rax
+   0xffffffff810cd77a <+201>:	mov    (%rax),%rbp
+   0xffffffff810cd77d <+204>:	lea    -0x10(%rax),%rbx
+   0xffffffff810cd781 <+208>:	sub    $0x10,%rbp
+   0xffffffff810cd785 <+212>:	jmp    0xffffffff810cd7ce <unlink_anon_vmas+285>
+   0xffffffff810cd7be <+269>:	mov    %rbp,%rbx
+   0xffffffff810cd7c6 <+277>:	mov    0x10(%rbp),%rax
+   0xffffffff810cd7ca <+281>:	lea    -0x10(%rax),%rbp
+   0xffffffff810cd7ce <+285>:	lea    0x10(%rbx),%rax
+   0xffffffff810cd7d2 <+289>:	cmp    %rax,%r14
+   0xffffffff810cd7d5 <+292>:	jne    0xffffffff810cd787 <unlink_anon_vmas+214>
+
+405			struct anon_vma *anon_vma = avc->anon_vma;
+406	
+407			put_anon_vma(anon_vma);
+   0xffffffff810cd787 <+214>:	mov    0x8(%rbx),%rdi
+   0xffffffff810cd79f <+238>:	callq  0xffffffff810cd64e <put_anon_vma>
+
+408	
+409			list_del(&avc->same_vma);
+410			anon_vma_chain_free(avc);
+   0xffffffff810cd7ac <+251>:	mov    %rbx,%rdi
+   0xffffffff810cd7c1 <+272>:	callq  0xffffffff810cc5c3 <anon_vma_chain_free>
+
+411		}
+412	}
+   0xffffffff810cd7d7 <+294>:	pop    %r12
+   0xffffffff810cd7d9 <+296>:	pop    %rbx
+   0xffffffff810cd7da <+297>:	pop    %rbp
+   0xffffffff810cd7db <+298>:	pop    %r12
+   0xffffffff810cd7dd <+300>:	pop    %r13
+   0xffffffff810cd7df <+302>:	pop    %r14
+   0xffffffff810cd7e1 <+304>:	pop    %r15
+   0xffffffff810cd7e3 <+306>:	retq   
+
+End of assembler dump.
+(gdb) quit

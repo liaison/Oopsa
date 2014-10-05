@@ -1,0 +1,22 @@
+GNU gdb (GDB) 7.4.1-debian
+Copyright (C) 2012 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.  Type "show copying"
+and "show warranty" for details.
+This GDB was configured as "x86_64-linux-gnu".
+For bug reporting instructions, please see:
+<http://www.gnu.org/software/gdb/bugs/>...
+Reading symbols from /home/guo/miparcours/pipeline/linux-3.7.2/kernel/sched/core.o...done.
+(gdb) 0x8eb1 is in schedule (include/linux/blkdev.h:1006).
+1001	
+1002	static inline bool blk_needs_flush_plug(struct task_struct *tsk)
+1003	{
+1004		struct blk_plug *plug = tsk->plug;
+1005	
+1006		return plug && (!list_empty(&plug->list) || !list_empty(&plug->cb_list));
+1007	}
+1008	
+1009	/*
+1010	 * tag stuff
+(gdb) quit

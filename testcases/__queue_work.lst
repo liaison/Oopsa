@@ -1,0 +1,721 @@
+GNU gdb (GDB) 7.4.1-debian
+Copyright (C) 2012 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.  Type "show copying"
+and "show warranty" for details.
+This GDB was configured as "x86_64-linux-gnu".
+For bug reporting instructions, please see:
+<http://www.gnu.org/software/gdb/bugs/>...
+Reading symbols from /home/guo/miparcours/pipeline/linux-3.6.10/kernel/workqueue.o...done.
+(gdb) Dump of assembler code for function __queue_work:
+522		return color << WORK_STRUCT_COLOR_SHIFT;
+   0x0000000000002c00 <+562>:	shl    $0x4,%r14d
+
+523	}
+524	
+525	static int get_work_color(struct work_struct *work)
+526	{
+527		return (*work_data_bits(work) >> WORK_STRUCT_COLOR_SHIFT) &
+528			((1 << WORK_STRUCT_COLOR_BITS) - 1);
+529	}
+530	
+531	static int work_next_color(int color)
+532	{
+533		return (color + 1) % WORK_NR_COLORS;
+534	}
+535	
+536	/*
+537	 * A work's data points to the cwq with WORK_STRUCT_CWQ set while the
+538	 * work is on queue.  Once execution starts, WORK_STRUCT_CWQ is
+539	 * cleared and the work data contains the cpu number it was last on.
+540	 *
+541	 * set_work_{cwq|cpu}() and clear_work_data() can be used to set the
+542	 * cwq, cpu or clear work->data.  These functions should only be
+543	 * called while the work is owned - ie. while the PENDING bit is set.
+544	 *
+545	 * get_work_[g]cwq() can be used to obtain the gcwq or cwq
+546	 * corresponding to a work.  gcwq is available once the work has been
+547	 * queued anywhere after initialization.  cwq is available only from
+548	 * queueing until execution starts.
+549	 */
+550	static inline void set_work_data(struct work_struct *work, unsigned long data,
+551					 unsigned long flags)
+552	{
+553		BUG_ON(!work_pending(work));
+554		atomic_long_set(&work->data, data | flags | work_static(work));
+555	}
+556	
+557	static void set_work_cwq(struct work_struct *work,
+558				 struct cpu_workqueue_struct *cwq,
+559				 unsigned long extra_flags)
+560	{
+561		set_work_data(work, (unsigned long)cwq,
+562			      WORK_STRUCT_PENDING | WORK_STRUCT_CWQ | extra_flags);
+563	}
+564	
+565	static void set_work_cpu(struct work_struct *work, unsigned int cpu)
+566	{
+567		set_work_data(work, cpu << WORK_STRUCT_FLAG_BITS, WORK_STRUCT_PENDING);
+568	}
+569	
+570	static void clear_work_data(struct work_struct *work)
+571	{
+572		set_work_data(work, WORK_STRUCT_NO_CPU, 0);
+573	}
+574	
+575	static struct cpu_workqueue_struct *get_work_cwq(struct work_struct *work)
+576	{
+577		unsigned long data = atomic_long_read(&work->data);
+578	
+579		if (data & WORK_STRUCT_CWQ)
+580			return (void *)(data & WORK_STRUCT_WQ_DATA_MASK);
+581		else
+582			return NULL;
+583	}
+584	
+585	static struct global_cwq *get_work_gcwq(struct work_struct *work)
+586	{
+587		unsigned long data = atomic_long_read(&work->data);
+588		unsigned int cpu;
+589	
+590		if (data & WORK_STRUCT_CWQ)
+591			return ((struct cpu_workqueue_struct *)
+592				(data & WORK_STRUCT_WQ_DATA_MASK))->pool->gcwq;
+593	
+594		cpu = data >> WORK_STRUCT_FLAG_BITS;
+595		if (cpu == WORK_CPU_NONE)
+596			return NULL;
+597	
+598		BUG_ON(cpu >= nr_cpu_ids && cpu != WORK_CPU_UNBOUND);
+599		return get_gcwq(cpu);
+600	}
+601	
+602	/*
+603	 * Policy functions.  These define the policies on how the global worker
+604	 * pools are managed.  Unless noted otherwise, these functions assume that
+605	 * they're being called with gcwq->lock held.
+606	 */
+607	
+608	static bool __need_more_worker(struct worker_pool *pool)
+609	{
+610		return !atomic_read(get_pool_nr_running(pool));
+611	}
+612	
+613	/*
+614	 * Need to wake up a worker?  Called from anything but currently
+615	 * running workers.
+616	 *
+617	 * Note that, because unbound workers never contribute to nr_running, this
+618	 * function will always return %true for unbound gcwq as long as the
+619	 * worklist isn't empty.
+620	 */
+621	static bool need_more_worker(struct worker_pool *pool)
+622	{
+623		return !list_empty(&pool->worklist) && __need_more_worker(pool);
+624	}
+625	
+626	/* Can I start working?  Called from busy but !running workers. */
+627	static bool may_start_working(struct worker_pool *pool)
+628	{
+629		return pool->nr_idle;
+630	}
+631	
+632	/* Do I need to keep working?  Called from currently running workers. */
+633	static bool keep_working(struct worker_pool *pool)
+634	{
+635		atomic_t *nr_running = get_pool_nr_running(pool);
+636	
+637		return !list_empty(&pool->worklist) && atomic_read(nr_running) <= 1;
+638	}
+639	
+640	/* Do we need a new worker?  Called from manager. */
+641	static bool need_to_create_worker(struct worker_pool *pool)
+642	{
+643		return need_more_worker(pool) && !may_start_working(pool);
+644	}
+645	
+646	/* Do I need to be the manager? */
+647	static bool need_to_manage_workers(struct worker_pool *pool)
+648	{
+649		return need_to_create_worker(pool) ||
+650			(pool->flags & POOL_MANAGE_WORKERS);
+651	}
+652	
+653	/* Do we have too many workers and should some go away? */
+654	static bool too_many_workers(struct worker_pool *pool)
+655	{
+656		bool managing = pool->flags & POOL_MANAGING_WORKERS;
+657		int nr_idle = pool->nr_idle + managing; /* manager is considered idle */
+658		int nr_busy = pool->nr_workers - nr_idle;
+659	
+660		return nr_idle > 2 && (nr_idle - 2) * MAX_IDLE_WORKERS_RATIO >= nr_busy;
+661	}
+662	
+663	/*
+664	 * Wake up functions.
+665	 */
+666	
+667	/* Return the first worker.  Safe with preemption disabled */
+668	static struct worker *first_worker(struct worker_pool *pool)
+669	{
+670		if (unlikely(list_empty(&pool->idle_list)))
+671			return NULL;
+672	
+673		return list_first_entry(&pool->idle_list, struct worker, entry);
+674	}
+675	
+676	/**
+677	 * wake_up_worker - wake up an idle worker
+678	 * @pool: worker pool to wake worker from
+679	 *
+680	 * Wake up the first idle worker of @pool.
+681	 *
+682	 * CONTEXT:
+683	 * spin_lock_irq(gcwq->lock).
+684	 */
+685	static void wake_up_worker(struct worker_pool *pool)
+686	{
+687		struct worker *worker = first_worker(pool);
+688	
+689		if (likely(worker))
+690			wake_up_process(worker->task);
+691	}
+692	
+693	/**
+694	 * wq_worker_waking_up - a worker is waking up
+695	 * @task: task waking up
+696	 * @cpu: CPU @task is waking up to
+697	 *
+698	 * This function is called during try_to_wake_up() when a worker is
+699	 * being awoken.
+700	 *
+701	 * CONTEXT:
+702	 * spin_lock_irq(rq->lock)
+703	 */
+704	void wq_worker_waking_up(struct task_struct *task, unsigned int cpu)
+705	{
+706		struct worker *worker = kthread_data(task);
+707	
+708		if (!(worker->flags & WORKER_NOT_RUNNING))
+709			atomic_inc(get_pool_nr_running(worker->pool));
+710	}
+711	
+712	/**
+713	 * wq_worker_sleeping - a worker is going to sleep
+714	 * @task: task going to sleep
+715	 * @cpu: CPU in question, must be the current CPU number
+716	 *
+717	 * This function is called during schedule() when a busy worker is
+718	 * going to sleep.  Worker on the same cpu can be woken up by
+719	 * returning pointer to its task.
+720	 *
+721	 * CONTEXT:
+722	 * spin_lock_irq(rq->lock)
+723	 *
+724	 * RETURNS:
+725	 * Worker task on @cpu to wake up, %NULL if none.
+726	 */
+727	struct task_struct *wq_worker_sleeping(struct task_struct *task,
+728					       unsigned int cpu)
+729	{
+730		struct worker *worker = kthread_data(task), *to_wakeup = NULL;
+731		struct worker_pool *pool = worker->pool;
+732		atomic_t *nr_running = get_pool_nr_running(pool);
+733	
+734		if (worker->flags & WORKER_NOT_RUNNING)
+735			return NULL;
+736	
+737		/* this can only happen on the local cpu */
+738		BUG_ON(cpu != raw_smp_processor_id());
+739	
+740		/*
+741		 * The counterpart of the following dec_and_test, implied mb,
+742		 * worklist not empty test sequence is in insert_work().
+743		 * Please read comment there.
+744		 *
+745		 * NOT_RUNNING is clear.  This means that we're bound to and
+746		 * running on the local cpu w/ rq lock held and preemption
+747		 * disabled, which in turn means that none else could be
+748		 * manipulating idle_list, so dereferencing idle_list without gcwq
+749		 * lock is safe.
+750		 */
+751		if (atomic_dec_and_test(nr_running) && !list_empty(&pool->worklist))
+752			to_wakeup = first_worker(pool);
+753		return to_wakeup ? to_wakeup->task : NULL;
+754	}
+755	
+756	/**
+757	 * worker_set_flags - set worker flags and adjust nr_running accordingly
+758	 * @worker: self
+759	 * @flags: flags to set
+760	 * @wakeup: wakeup an idle worker if necessary
+761	 *
+762	 * Set @flags in @worker->flags and adjust nr_running accordingly.  If
+763	 * nr_running becomes zero and @wakeup is %true, an idle worker is
+764	 * woken up.
+765	 *
+766	 * CONTEXT:
+767	 * spin_lock_irq(gcwq->lock)
+768	 */
+769	static inline void worker_set_flags(struct worker *worker, unsigned int flags,
+770					    bool wakeup)
+771	{
+772		struct worker_pool *pool = worker->pool;
+773	
+774		WARN_ON_ONCE(worker->task != current);
+775	
+776		/*
+777		 * If transitioning into NOT_RUNNING, adjust nr_running and
+778		 * wake up an idle worker as necessary if requested by
+779		 * @wakeup.
+780		 */
+781		if ((flags & WORKER_NOT_RUNNING) &&
+782		    !(worker->flags & WORKER_NOT_RUNNING)) {
+783			atomic_t *nr_running = get_pool_nr_running(pool);
+784	
+785			if (wakeup) {
+786				if (atomic_dec_and_test(nr_running) &&
+787				    !list_empty(&pool->worklist))
+788					wake_up_worker(pool);
+789			} else
+790				atomic_dec(nr_running);
+791		}
+792	
+793		worker->flags |= flags;
+794	}
+795	
+796	/**
+797	 * worker_clr_flags - clear worker flags and adjust nr_running accordingly
+798	 * @worker: self
+799	 * @flags: flags to clear
+800	 *
+801	 * Clear @flags in @worker->flags and adjust nr_running accordingly.
+802	 *
+803	 * CONTEXT:
+804	 * spin_lock_irq(gcwq->lock)
+805	 */
+806	static inline void worker_clr_flags(struct worker *worker, unsigned int flags)
+807	{
+808		struct worker_pool *pool = worker->pool;
+809		unsigned int oflags = worker->flags;
+810	
+811		WARN_ON_ONCE(worker->task != current);
+812	
+813		worker->flags &= ~flags;
+814	
+815		/*
+816		 * If transitioning out of NOT_RUNNING, increment nr_running.  Note
+817		 * that the nested NOT_RUNNING is not a noop.  NOT_RUNNING is mask
+818		 * of multiple flags, not a single flag.
+819		 */
+820		if ((flags & WORKER_NOT_RUNNING) && (oflags & WORKER_NOT_RUNNING))
+821			if (!(worker->flags & WORKER_NOT_RUNNING))
+822				atomic_inc(get_pool_nr_running(pool));
+823	}
+824	
+825	/**
+826	 * busy_worker_head - return the busy hash head for a work
+827	 * @gcwq: gcwq of interest
+828	 * @work: work to be hashed
+829	 *
+830	 * Return hash head of @gcwq for @work.
+831	 *
+832	 * CONTEXT:
+833	 * spin_lock_irq(gcwq->lock).
+834	 *
+835	 * RETURNS:
+836	 * Pointer to the hash head.
+837	 */
+838	static struct hlist_head *busy_worker_head(struct global_cwq *gcwq,
+839						   struct work_struct *work)
+840	{
+841		const int base_shift = ilog2(sizeof(struct work_struct));
+842		unsigned long v = (unsigned long)work;
+843	
+844		/* simple shift and fold hash, do we need something better? */
+845		v >>= base_shift;
+846		v += v >> BUSY_WORKER_HASH_ORDER;
+847		v &= BUSY_WORKER_HASH_MASK;
+848	
+849		return &gcwq->busy_hash[v];
+850	}
+851	
+852	/**
+853	 * __find_worker_executing_work - find worker which is executing a work
+854	 * @gcwq: gcwq of interest
+855	 * @bwh: hash head as returned by busy_worker_head()
+856	 * @work: work to find worker for
+857	 *
+858	 * Find a worker which is executing @work on @gcwq.  @bwh should be
+859	 * the hash head obtained by calling busy_worker_head() with the same
+860	 * work.
+861	 *
+862	 * CONTEXT:
+863	 * spin_lock_irq(gcwq->lock).
+864	 *
+865	 * RETURNS:
+866	 * Pointer to worker which is executing @work if found, NULL
+867	 * otherwise.
+868	 */
+869	static struct worker *__find_worker_executing_work(struct global_cwq *gcwq,
+870							   struct hlist_head *bwh,
+871							   struct work_struct *work)
+872	{
+873		struct worker *worker;
+874		struct hlist_node *tmp;
+875	
+876		hlist_for_each_entry(worker, tmp, bwh, hentry)
+877			if (worker->current_work == work)
+878				return worker;
+879		return NULL;
+880	}
+881	
+882	/**
+883	 * find_worker_executing_work - find worker which is executing a work
+884	 * @gcwq: gcwq of interest
+885	 * @work: work to find worker for
+886	 *
+887	 * Find a worker which is executing @work on @gcwq.  This function is
+888	 * identical to __find_worker_executing_work() except that this
+889	 * function calculates @bwh itself.
+890	 *
+891	 * CONTEXT:
+892	 * spin_lock_irq(gcwq->lock).
+893	 *
+894	 * RETURNS:
+895	 * Pointer to worker which is executing @work if found, NULL
+896	 * otherwise.
+897	 */
+898	static struct worker *find_worker_executing_work(struct global_cwq *gcwq,
+899							 struct work_struct *work)
+900	{
+901		return __find_worker_executing_work(gcwq, busy_worker_head(gcwq, work),
+902						    work);
+903	}
+904	
+905	/**
+906	 * insert_work - insert a work into gcwq
+907	 * @cwq: cwq @work belongs to
+908	 * @work: work to insert
+909	 * @head: insertion point
+910	 * @extra_flags: extra WORK_STRUCT_* flags to set
+911	 *
+912	 * Insert @work which belongs to @cwq into @gcwq after @head.
+913	 * @extra_flags is or'd to work_struct flags.
+914	 *
+915	 * CONTEXT:
+916	 * spin_lock_irq(gcwq->lock).
+917	 */
+918	static void insert_work(struct cpu_workqueue_struct *cwq,
+919				struct work_struct *work, struct list_head *head,
+920				unsigned int extra_flags)
+921	{
+922		struct worker_pool *pool = cwq->pool;
+923	
+924		/* we own @work, set data and link */
+925		set_work_cwq(work, cwq, extra_flags);
+926	
+927		/*
+928		 * Ensure that we get the right work->data if we see the
+929		 * result of list_add() below, see try_to_grab_pending().
+930		 */
+931		smp_wmb();
+932	
+933		list_add_tail(&work->entry, head);
+934	
+935		/*
+936		 * Ensure either worker_sched_deactivated() sees the above
+937		 * list_add_tail() or we see zero nr_running to avoid workers
+938		 * lying around lazily while there are works to be processed.
+939		 */
+940		smp_mb();
+941	
+942		if (__need_more_worker(pool))
+943			wake_up_worker(pool);
+944	}
+945	
+946	/*
+947	 * Test whether @work is being queued from another work executing on the
+948	 * same workqueue.  This is rather expensive and should only be used from
+949	 * cold paths.
+950	 */
+951	static bool is_chained_work(struct workqueue_struct *wq)
+952	{
+953		unsigned long flags;
+954		unsigned int cpu;
+955	
+956		for_each_gcwq_cpu(cpu) {
+   0x00000000000029ee <+32>:	mov    0x0(%rip),%rsi        # 0x29f5 <__queue_work+39>
+   0x00000000000029f5 <+39>:	mov    $0x3,%edx
+   0x00000000000029fa <+44>:	or     $0xffffffff,%edi
+   0x0000000000002a06 <+56>:	callq  0x829 <__next_gcwq_cpu>
+   0x0000000000002a0b <+61>:	mov    %eax,%ebx
+   0x0000000000002a0d <+63>:	jmp    0x2a87 <__queue_work+185>
+   0x0000000000002a72 <+164>:	mov    0x0(%rip),%rsi        # 0x2a79 <__queue_work+171>
+   0x0000000000002a79 <+171>:	mov    %ebx,%edi
+   0x0000000000002a7b <+173>:	mov    $0x3,%edx
+   0x0000000000002a80 <+178>:	callq  0x829 <__next_gcwq_cpu>
+   0x0000000000002a85 <+183>:	mov    %eax,%ebx
+   0x0000000000002a87 <+185>:	cmp    $0x8,%ebx
+   0x0000000000002a8a <+188>:	jbe    0x2a0f <__queue_work+65>
+
+957			struct global_cwq *gcwq = get_gcwq(cpu);
+   0x0000000000002a0f <+65>:	mov    %ebx,%edi
+   0x0000000000002a11 <+67>:	callq  0x2d <get_gcwq>
+   0x0000000000002a19 <+75>:	mov    %rax,%rbp
+
+958			struct worker *worker;
+959			struct hlist_node *pos;
+960			int i;
+961	
+962			spin_lock_irqsave(&gcwq->lock, flags);
+   0x0000000000002a16 <+72>:	mov    %rax,%rdi
+   0x0000000000002a1c <+78>:	callq  0x2a21 <__queue_work+83>
+   0x0000000000002a21 <+83>:	xor    %edi,%edi
+   0x0000000000002a23 <+85>:	mov    %rax,%rsi
+
+963			for_each_busy_worker(worker, i, pos, gcwq) {
+   0x0000000000002a26 <+88>:	mov    0x10(%rbp,%rdi,1),%rdx
+   0x0000000000002a2b <+93>:	jmp    0x2a50 <__queue_work+130>
+   0x0000000000002a2d <+95>:	mov    (%rdx),%rdx
+   0x0000000000002a30 <+98>:	jmp    0x2a50 <__queue_work+130>
+   0x0000000000002a50 <+130>:	test   %rdx,%rdx
+   0x0000000000002a53 <+133>:	je     0x2a5d <__queue_work+143>
+   0x0000000000002a61 <+147>:	cmp    $0x200,%rdi
+   0x0000000000002a68 <+154>:	jne    0x2a26 <__queue_work+88>
+
+964				if (worker->task != current)
+   0x0000000000002a55 <+135>:	cmp    %r13,0x30(%rdx)
+   0x0000000000002a59 <+139>:	jne    0x2a2d <__queue_work+95>
+   0x0000000000002a5b <+141>:	jmp    0x2a32 <__queue_work+100>
+   0x0000000000002a5d <+143>:	add    $0x8,%rdi
+
+965					continue;
+966				spin_unlock_irqrestore(&gcwq->lock, flags);
+967				/*
+968				 * I'm @worker, no locking necessary.  See if @work
+969				 * is headed to the same workqueue.
+970				 */
+971				return worker->current_cwq->wq == wq;
+   0x0000000000002a3f <+113>:	mov    0x8(%rsp),%rdx
+   0x0000000000002a44 <+118>:	mov    0x18(%rdx),%rax
+
+972			}
+973			spin_unlock_irqrestore(&gcwq->lock, flags);
+974		}
+975		return false;
+976	}
+977	
+978	static void __queue_work(unsigned int cpu, struct workqueue_struct *wq,
+979				 struct work_struct *work)
+980	{
+   0x00000000000029ce <+0>:	push   %r15
+   0x00000000000029d0 <+2>:	mov    %edi,%r15d
+   0x00000000000029d3 <+5>:	push   %r14
+   0x00000000000029d5 <+7>:	mov    %rsi,%r14
+   0x00000000000029d8 <+10>:	push   %r13
+   0x00000000000029da <+12>:	push   %r12
+   0x00000000000029dc <+14>:	mov    %rdx,%r12
+   0x00000000000029df <+17>:	push   %rbp
+   0x00000000000029e0 <+18>:	push   %rbx
+   0x00000000000029e1 <+19>:	sub    $0x18,%rsp
+
+981		struct global_cwq *gcwq;
+982		struct cpu_workqueue_struct *cwq;
+983		struct list_head *worklist;
+984		unsigned int work_flags;
+985		unsigned long flags;
+986	
+987		debug_work_activate(work);
+988	
+989		/* if dying, only works from the same workqueue are allowed */
+990		if (unlikely(wq->flags & WQ_DRAINING) &&
+   0x00000000000029e5 <+23>:	testb  $0x40,(%rsi)
+   0x00000000000029e8 <+26>:	je     0x2ab6 <__queue_work+232>
+
+991		    WARN_ON_ONCE(!is_chained_work(wq)))
+   0x0000000000002a48 <+122>:	cmp    %r14,0x8(%rax)
+   0x0000000000002a4c <+126>:	je     0x2ab6 <__queue_work+232>
+   0x0000000000002a4e <+128>:	jmp    0x2a8c <__queue_work+190>
+   0x0000000000002a8c <+190>:	cmpb   $0x0,0x0(%rip)        # 0x2a93 <__queue_work+197>
+   0x0000000000002a93 <+197>:	jne    0x2c12 <__queue_work+580>
+   0x0000000000002a99 <+203>:	mov    $0x3df,%esi
+   0x0000000000002a9e <+208>:	mov    $0x0,%rdi
+   0x0000000000002aa5 <+215>:	callq  0x2aaa <__queue_work+220>
+   0x0000000000002aaa <+220>:	movb   $0x1,0x0(%rip)        # 0x2ab1 <__queue_work+227>
+   0x0000000000002ab1 <+227>:	jmpq   0x2c12 <__queue_work+580>
+
+992			return;
+993	
+994		/* determine gcwq to use */
+995		if (!(wq->flags & WQ_UNBOUND)) {
+   0x0000000000002ab6 <+232>:	mov    (%r14),%ebx
+   0x0000000000002ab9 <+235>:	test   $0x2,%bl
+   0x0000000000002abc <+238>:	jne    0x2b2f <__queue_work+353>
+
+996			struct global_cwq *last_gcwq;
+997	
+998			if (unlikely(cpu == WORK_CPU_UNBOUND))
+   0x0000000000002abe <+240>:	cmp    $0x8,%r15d
+   0x0000000000002ac2 <+244>:	jne    0x2acd <__queue_work+255>
+
+999				cpu = raw_smp_processor_id();
+   0x0000000000002ac4 <+246>:	mov    %gs:0x0,%r15d
+
+1000	
+1001			/*
+1002			 * It's multi cpu.  If @wq is non-reentrant and @work
+1003			 * was previously on a different cpu, it might still
+1004			 * be running there, in which case the work needs to
+1005			 * be queued on that cpu to guarantee non-reentrance.
+1006			 */
+1007			gcwq = get_gcwq(cpu);
+   0x0000000000002acd <+255>:	mov    %r15d,%edi
+   0x0000000000002ad0 <+258>:	callq  0x2d <get_gcwq>
+   0x0000000000002ad8 <+266>:	mov    %rax,%rbp
+
+1008			if (wq->flags & WQ_NON_REENTRANT &&
+   0x0000000000002ad5 <+263>:	and    $0x1,%bl
+   0x0000000000002adb <+269>:	je     0x2b22 <__queue_work+340>
+   0x0000000000002add <+271>:	mov    %r12,%rdi
+   0x0000000000002ae0 <+274>:	callq  0x7e1 <get_work_gcwq>
+   0x0000000000002ae5 <+279>:	test   %rax,%rax
+   0x0000000000002ae8 <+282>:	mov    %rax,%rbx
+   0x0000000000002aeb <+285>:	je     0x2b22 <__queue_work+340>
+
+1009			    (last_gcwq = get_work_gcwq(work)) && last_gcwq != gcwq) {
+   0x0000000000002aed <+287>:	cmp    %rbp,%rax
+   0x0000000000002af0 <+290>:	je     0x2b22 <__queue_work+340>
+
+1010				struct worker *worker;
+1011	
+1012				spin_lock_irqsave(&last_gcwq->lock, flags);
+   0x0000000000002af2 <+292>:	mov    %rax,%rdi
+   0x0000000000002af5 <+295>:	callq  0x2afa <__queue_work+300>
+   0x0000000000002b00 <+306>:	mov    %rax,%r13
+
+1013	
+1014				worker = find_worker_executing_work(last_gcwq, work);
+   0x0000000000002afa <+300>:	mov    %r12,%rsi
+   0x0000000000002afd <+303>:	mov    %rbx,%rdi
+   0x0000000000002b03 <+309>:	callq  0x2683 <find_worker_executing_work>
+
+1015	
+1016				if (worker && worker->current_cwq->wq == wq)
+   0x0000000000002b08 <+314>:	test   %rax,%rax
+   0x0000000000002b0b <+317>:	je     0x2b17 <__queue_work+329>
+   0x0000000000002b0d <+319>:	mov    0x18(%rax),%rax
+   0x0000000000002b11 <+323>:	cmp    %r14,0x8(%rax)
+   0x0000000000002b15 <+327>:	je     0x2b47 <__queue_work+377>
+   0x0000000000002b47 <+377>:	mov    %rbx,%rbp
+
+1017					gcwq = last_gcwq;
+1018				else {
+1019					/* meh... not running there, queue here */
+1020					spin_unlock_irqrestore(&last_gcwq->lock, flags);
+1021					spin_lock_irqsave(&gcwq->lock, flags);
+1022				}
+1023			} else
+1024				spin_lock_irqsave(&gcwq->lock, flags);
+   0x0000000000002b22 <+340>:	mov    %rbp,%rdi
+   0x0000000000002b25 <+343>:	callq  0x2b2a <__queue_work+348>
+   0x0000000000002b2a <+348>:	mov    %rax,%r13
+   0x0000000000002b2d <+351>:	jmp    0x2b4a <__queue_work+380>
+
+1025		} else {
+1026			gcwq = get_gcwq(WORK_CPU_UNBOUND);
+   0x0000000000002b36 <+360>:	mov    $0x0,%rbp
+
+1027			spin_lock_irqsave(&gcwq->lock, flags);
+   0x0000000000002b2f <+353>:	mov    $0x0,%rdi
+   0x0000000000002b3d <+367>:	callq  0x2b42 <__queue_work+372>
+   0x0000000000002b42 <+372>:	mov    %rax,%r13
+   0x0000000000002b45 <+375>:	jmp    0x2b4a <__queue_work+380>
+
+1028		}
+1029	
+1030		/* gcwq determined, get cwq and queue */
+1031		cwq = get_cwq(gcwq->cpu, wq);
+   0x0000000000002b4a <+380>:	mov    0x4(%rbp),%edi
+   0x0000000000002b4d <+383>:	mov    %r14,%rsi
+   0x0000000000002b50 <+386>:	callq  0x797 <get_cwq>
+   0x0000000000002b55 <+391>:	mov    %rax,%rbx
+
+1032		trace_workqueue_queue_work(cpu, cwq, work);
+1033	
+1034		if (WARN_ON(!list_empty(&work->entry))) {
+   0x0000000000002b66 <+408>:	lea    0x8(%r12),%rax
+   0x0000000000002b6b <+413>:	cmp    %rax,0x8(%r12)
+   0x0000000000002b70 <+418>:	je     0x2bf9 <__queue_work+555>
+   0x0000000000002b76 <+424>:	jmp    0x2b92 <__queue_work+452>
+   0x0000000000002b92 <+452>:	mov    $0x40a,%esi
+   0x0000000000002b97 <+457>:	mov    $0x0,%rdi
+   0x0000000000002b9e <+464>:	callq  0x2ba3 <__queue_work+469>
+   0x0000000000002ba3 <+469>:	jmp    0x2bcf <__queue_work+513>
+
+1035			spin_unlock_irqrestore(&gcwq->lock, flags);
+1036			return;
+1037		}
+1038	
+1039		cwq->nr_in_flight[cwq->work_color]++;
+   0x0000000000002bf9 <+555>:	mov    0x10(%rbx),%r14d
+   0x0000000000002bfd <+559>:	movslq %r14d,%rax
+   0x0000000000002c04 <+566>:	incl   0x18(%rbx,%rax,4)
+
+1040		work_flags = work_color_to_flags(cwq->work_color);
+1041	
+1042		if (likely(cwq->nr_active < cwq->max_active)) {
+   0x0000000000002c08 <+570>:	mov    0x58(%rbx),%eax
+   0x0000000000002c0b <+573>:	cmp    %eax,0x54(%rbx)
+   0x0000000000002c0e <+576>:	jl     0x2ba5 <__queue_work+471>
+   0x0000000000002c10 <+578>:	jmp    0x2bb9 <__queue_work+491>
+
+1043			trace_workqueue_activate_work(work);
+   0x0000000000002ba5 <+471>:	mov    %r12,%rdi
+   0x0000000000002ba8 <+474>:	callq  0x762 <trace_workqueue_activate_work>
+
+1044			cwq->nr_active++;
+   0x0000000000002bb0 <+482>:	incl   0x54(%rbx)
+
+1045			worklist = &cwq->pool->worklist;
+   0x0000000000002bad <+479>:	mov    (%rbx),%rdx
+   0x0000000000002bb3 <+485>:	add    $0x10,%rdx
+   0x0000000000002bb7 <+489>:	jmp    0x2bc1 <__queue_work+499>
+
+1046		} else {
+1047			work_flags |= WORK_STRUCT_DELAYED;
+   0x0000000000002bbd <+495>:	or     $0x2,%r14d
+
+1048			worklist = &cwq->delayed_works;
+   0x0000000000002bb9 <+491>:	lea    0x60(%rbx),%rdx
+
+1049		}
+1050	
+1051		insert_work(cwq, work, worklist, work_flags);
+   0x0000000000002bc1 <+499>:	mov    %r14d,%ecx
+   0x0000000000002bc4 <+502>:	mov    %r12,%rsi
+   0x0000000000002bc7 <+505>:	mov    %rbx,%rdi
+   0x0000000000002bca <+508>:	callq  0x2139 <insert_work>
+
+1052	
+1053		spin_unlock_irqrestore(&gcwq->lock, flags);
+1054	}
+   0x0000000000002bcf <+513>:	add    $0x18,%rsp
+   0x0000000000002bd9 <+523>:	pop    %rbx
+   0x0000000000002bda <+524>:	pop    %rbp
+   0x0000000000002bdb <+525>:	pop    %r12
+   0x0000000000002bdd <+527>:	pop    %r13
+   0x0000000000002bdf <+529>:	pop    %r14
+   0x0000000000002be1 <+531>:	pop    %r15
+   0x0000000000002c12 <+580>:	add    $0x18,%rsp
+   0x0000000000002c16 <+584>:	pop    %rbx
+   0x0000000000002c17 <+585>:	pop    %rbp
+   0x0000000000002c18 <+586>:	pop    %r12
+   0x0000000000002c1a <+588>:	pop    %r13
+   0x0000000000002c1c <+590>:	pop    %r14
+   0x0000000000002c1e <+592>:	pop    %r15
+   0x0000000000002c20 <+594>:	retq   
+
+End of assembler dump.
+(gdb) quit

@@ -1,0 +1,45 @@
+GNU gdb (GDB) 7.4.1-debian
+Copyright (C) 2012 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.  Type "show copying"
+and "show warranty" for details.
+This GDB was configured as "x86_64-linux-gnu".
+For bug reporting instructions, please see:
+<http://www.gnu.org/software/gdb/bugs/>...
+Reading symbols from /home/guo/miparcours/pipeline/linux-3.7.2/kernel/sched/core.o...done.
+(gdb) Dump of assembler code for function schedule:
+2895		if (!tsk->state || tsk_is_pi_blocked(tsk))
+   0x0000000000008e7a <+9>:	mov    (%rax),%rdx
+   0x0000000000008e7d <+12>:	test   %rdx,%rdx
+   0x0000000000008e80 <+15>:	je     0x8ecc <schedule+91>
+   0x0000000000008e82 <+17>:	cmpq   $0x0,0x500(%rax)
+   0x0000000000008e8a <+25>:	jne    0x8ecc <schedule+91>
+
+2896			return;
+2897		/*
+2898		 * If we are going to sleep and we have plugged IO queued,
+2899		 * make sure to submit it to avoid deadlocks.
+2900		 */
+2901		if (blk_needs_flush_plug(tsk))
+   0x0000000000008eb5 <+68>:	test   %eax,%eax
+   0x0000000000008eb7 <+70>:	je     0x8ecc <schedule+91>
+
+2902			blk_schedule_flush_plug(tsk);
+2903	}
+2904	
+2905	asmlinkage void __sched schedule(void)
+2906	{
+   0x0000000000008ebe <+77>:	push   %r8
+
+2907		struct task_struct *tsk = current;
+2908	
+2909		sched_submit_work(tsk);
+2910		__schedule();
+   0x0000000000008ecc <+91>:	jmpq   0x8796 <__schedule>
+
+2911	}
+   0x0000000000008eca <+89>:	pop    %r9
+
+End of assembler dump.
+(gdb) quit

@@ -1,0 +1,828 @@
+Source_Sequence:
+[0]:	0xffffffff810dbbe8 <+0> push   %r15
+[1]:	0xffffffff810dbbea <+2> push   %r14
+[2]:	0xffffffff810dbbec <+4> push   %r13
+[3]:	0xffffffff810dbbee <+6> mov    %esi,%r13d
+[4]:	0xffffffff810dbbf1 <+9> push   %r12
+[5]:	0xffffffff810dbbf3 <+11> push   %rbp
+[6]:	0xffffffff810dbbf4 <+12> mov    %rdi,%rbp
+[7]:	0xffffffff810dbbf7 <+15> push   %rbx
+[8]:	0xffffffff810dbbf8 <+16> push   %r8
+[9]:	0xffffffff810dbbfa <+18> mov    0x593e37(%rip),%r12d        # 0xffffffff8166fa38
+[10]:	0xffffffff810dbc01 <+25> and    %esi,%r12d
+[11]:	0xffffffff810dbc04 <+28> mov    %r12d,%edi
+[12]:	0xffffffff810dbc07 <+31> callq  0xffffffff810da4c1 <cache_alloc_debugcheck_before>
+[13]:	0xffffffff810dbc19 <+49> mov    %r12d,%esi
+[14]:	0xffffffff810dbc1c <+52> mov    %rbp,%rdi
+[15]:	0xffffffff810dbc1f <+55> callq  0xffffffff810dafa8 <____cache_alloc>
+[16]:	0xffffffff810dbc24 <+60> mov    %r14,%rdi
+[17]:	0xffffffff810dbc27 <+63> mov    %rax,%rbx
+[18]:	0xffffffff810dbc2a <+66> callq  0xffffffff810da1d8 <arch_local_irq_restore>
+[19]:	0xffffffff810dbc2f <+71> mov    %rbx,%rdi
+[20]:	0xffffffff810dbc32 <+74> callq  0xffffffff810da1f0 <prefetchw>
+[21]:	0xffffffff810dbc37 <+79> and    $0x8000,%r12d
+[22]:	0xffffffff810dbc3e <+86> je     0xffffffff810dbc50 <kmem_cache_alloc+104>
+[23]:	0xffffffff810dbc40 <+88> test   %rbx,%rbx
+[24]:	0xffffffff810dbc43 <+91> je     0xffffffff810dbc50 <kmem_cache_alloc+104>
+[25]:	0xffffffff810dbc45 <+93> movslq 0x6c(%rbp),%rcx
+[26]:	0xffffffff810dbc49 <+97> xor    %eax,%eax
+[27]:	0xffffffff810dbc4b <+99> mov    %rbx,%rdi
+[28]:	0xffffffff810dbc4e <+102> rep stos %al,%es:(%rdi)
+[29]:	0xffffffff810dbc56 <+110> mov    0xc(%rbp),%r14d
+[30]:	0xffffffff810dbc5a <+114> movslq 0x6c(%rbp),%r12
+[31]:	0xffffffff810dbc5e <+118> mov    0x38(%rsp),%r15
+[32]:	0xffffffff810dbc96 <+174> pop    %rsi
+[33]:	0xffffffff810dbc97 <+175> mov    %rbx,%rax
+[34]:	0xffffffff810dbc9a <+178> pop    %rbx
+[35]:	0xffffffff810dbc9b <+179> pop    %rbp
+[36]:	0xffffffff810dbc9c <+180> pop    %r12
+[37]:	0xffffffff810dbc9e <+182> pop    %r13
+[38]:	0xffffffff810dbca0 <+184> pop    %r14
+[39]:	0xffffffff810dbca2 <+186> pop    %r15
+[40]:	0xffffffff810dbca4 <+188> retq   
+
+Query_Sequence:
+[0]:	outsl  %ds:(%rsi),(%dx)
+[1]:	cmp    %ecx,0x0(%rdx)
+[2]:	mov    (%r14),%r8
+[3]:	add    %gs:0xdbc8,%r8
+[4]:	mov    0x8(%r8),%rdx
+[5]:	mov    (%r8),%r12
+[6]:	test   %r12,%r12
+[7]:	je     0xc8
+[8]:	movslq 0x20(%r14),%rax
+[9]:	mov    (%r14),%r8
+[10]:	test   $0xf,%r8b
+[0]:	mov    (%r12,%rax,1),%rbx     <-- trapping instruction
+[1]:	jne    0x107
+[2]:	lea    0x1(%rdx),%rcx
+[3]:	mov    %r12,%rax
+[4]:	gs
+
+Anchor_List:
+[3]:	mov    %esi,%r13d
+[6]:	mov    %rdi,%rbp
+[9]:	mov    0x593e37(%rip),%r12d        # 0xffffffff8166fa38
+[11]:	mov    %r12d,%edi
+[13]:	mov    %r12d,%esi
+[14]:	mov    %rbp,%rdi
+[16]:	mov    %r14,%rdi
+[17]:	mov    %rax,%rbx
+[19]:	mov    %rbx,%rdi
+[25]:	movslq 0x6c(%rbp),%rcx
+[27]:	mov    %rbx,%rdi
+[29]:	mov    0xc(%rbp),%r14d
+[30]:	movslq 0x6c(%rbp),%r12
+[31]:	mov    0x38(%rsp),%r15
+[33]:	mov    %rbx,%rax
+Left Match======>
+Anchor: 3, Score: -11, Match: 0, Mismatch: 3, Gap: 8
+---	<->	outsl  %ds:(%rsi),(%dx)
+---	<->	cmp    %ecx,0x0(%rdx)
+---	<->	mov    (%r14),%r8
+---	<->	add    %gs:0xdbc8,%r8
+---	<->	mov    0x8(%r8),%rdx
+---	<->	mov    (%r8),%r12
+---	<->	test   %r12,%r12
+---	<->	je     0xc8
+push   %r15	<->	movslq 0x20(%r14),%rax
+push   %r14	<->	mov    (%r14),%r8
+push   %r13	<->	test   $0xf,%r8b
+
+Right Match======>
+Anchor: 3, Score: -1, Match: 1, Mismatch: 3, Gap: 0
+push   %r12	<->	jne    0x107
+push   %rbp	<->	lea    0x1(%rdx),%rcx
+mov    %rdi,%rbp	<->	mov    %r12,%rax
+push   %rbx	<->	gs
+
+Total Match===========>
+Anchor: 3, Score: -10, Match: 2, Mismatch: 6, Gap: 8
+---	<->	outsl  %ds:(%rsi),(%dx)
+---	<->	cmp    %ecx,0x0(%rdx)
+---	<->	mov    (%r14),%r8
+---	<->	add    %gs:0xdbc8,%r8
+---	<->	mov    0x8(%r8),%rdx
+---	<->	mov    (%r8),%r12
+---	<->	test   %r12,%r12
+---	<->	je     0xc8
+push   %r15	<->	movslq 0x20(%r14),%rax
+push   %r14	<->	mov    (%r14),%r8
+push   %r13	<->	test   $0xf,%r8b
+mov    %esi,%r13d	<->	mov    (%r12,%rax,1),%rbx     <-- trapping instruction
+push   %r12	<->	jne    0x107
+push   %rbp	<->	lea    0x1(%rdx),%rcx
+mov    %rdi,%rbp	<->	mov    %r12,%rax
+push   %rbx	<->	gs
+
+**********************
+Left Match======>
+Anchor: 6, Score: -8, Match: 1, Mismatch: 5, Gap: 5
+---	<->	outsl  %ds:(%rsi),(%dx)
+---	<->	cmp    %ecx,0x0(%rdx)
+---	<->	mov    (%r14),%r8
+---	<->	add    %gs:0xdbc8,%r8
+---	<->	mov    0x8(%r8),%rdx
+push   %r15	<->	mov    (%r8),%r12
+push   %r14	<->	test   %r12,%r12
+push   %r13	<->	je     0xc8
+mov    %esi,%r13d	<->	movslq 0x20(%r14),%rax
+push   %r12	<->	mov    (%r14),%r8
+push   %rbp	<->	test   $0xf,%r8b
+
+Right Match======>
+Anchor: 6, Score: -1, Match: 1, Mismatch: 3, Gap: 0
+push   %rbx	<->	jne    0x107
+push   %r8	<->	lea    0x1(%rdx),%rcx
+mov    0x593e37(%rip),%r12d        # 0xffffffff8166fa38	<->	mov    %r12,%rax
+and    %esi,%r12d	<->	gs
+
+Total Match===========>
+Anchor: 6, Score: -7, Match: 3, Mismatch: 8, Gap: 5
+---	<->	outsl  %ds:(%rsi),(%dx)
+---	<->	cmp    %ecx,0x0(%rdx)
+---	<->	mov    (%r14),%r8
+---	<->	add    %gs:0xdbc8,%r8
+---	<->	mov    0x8(%r8),%rdx
+push   %r15	<->	mov    (%r8),%r12
+push   %r14	<->	test   %r12,%r12
+push   %r13	<->	je     0xc8
+mov    %esi,%r13d	<->	movslq 0x20(%r14),%rax
+push   %r12	<->	mov    (%r14),%r8
+push   %rbp	<->	test   $0xf,%r8b
+mov    %rdi,%rbp	<->	mov    (%r12,%rax,1),%rbx     <-- trapping instruction
+push   %rbx	<->	jne    0x107
+push   %r8	<->	lea    0x1(%rdx),%rcx
+mov    0x593e37(%rip),%r12d        # 0xffffffff8166fa38	<->	mov    %r12,%rax
+and    %esi,%r12d	<->	gs
+
+**********************
+Left Match======>
+Anchor: 9, Score: -5, Match: 2, Mismatch: 7, Gap: 2
+---	<->	outsl  %ds:(%rsi),(%dx)
+---	<->	cmp    %ecx,0x0(%rdx)
+push   %r15	<->	mov    (%r14),%r8
+push   %r14	<->	add    %gs:0xdbc8,%r8
+push   %r13	<->	mov    0x8(%r8),%rdx
+mov    %esi,%r13d	<->	mov    (%r8),%r12
+push   %r12	<->	test   %r12,%r12
+push   %rbp	<->	je     0xc8
+mov    %rdi,%rbp	<->	movslq 0x20(%r14),%rax
+push   %rbx	<->	mov    (%r14),%r8
+push   %r8	<->	test   $0xf,%r8b
+
+Right Match======>
+Anchor: 9, Score: -1, Match: 1, Mismatch: 2, Gap: 1
+and    %esi,%r12d	<->	jne    0x107
+---	<->	lea    0x1(%rdx),%rcx
+mov    %r12d,%edi	<->	mov    %r12,%rax
+callq  0xffffffff810da4c1 <cache_alloc_debugcheck_before>	<->	gs
+
+Total Match===========>
+Anchor: 9, Score: -4, Match: 4, Mismatch: 9, Gap: 3
+---	<->	outsl  %ds:(%rsi),(%dx)
+---	<->	cmp    %ecx,0x0(%rdx)
+push   %r15	<->	mov    (%r14),%r8
+push   %r14	<->	add    %gs:0xdbc8,%r8
+push   %r13	<->	mov    0x8(%r8),%rdx
+mov    %esi,%r13d	<->	mov    (%r8),%r12
+push   %r12	<->	test   %r12,%r12
+push   %rbp	<->	je     0xc8
+mov    %rdi,%rbp	<->	movslq 0x20(%r14),%rax
+push   %rbx	<->	mov    (%r14),%r8
+push   %r8	<->	test   $0xf,%r8b
+mov    0x593e37(%rip),%r12d        # 0xffffffff8166fa38	<->	mov    (%r12,%rax,1),%rbx     <-- trapping instruction
+and    %esi,%r12d	<->	jne    0x107
+---	<->	lea    0x1(%rdx),%rcx
+mov    %r12d,%edi	<->	mov    %r12,%rax
+callq  0xffffffff810da4c1 <cache_alloc_debugcheck_before>	<->	gs
+
+**********************
+Left Match======>
+Anchor: 11, Score: -1, Match: 3, Mismatch: 7, Gap: 1
+push   %r14	<->	outsl  %ds:(%rsi),(%dx)
+push   %r13	<->	cmp    %ecx,0x0(%rdx)
+mov    %esi,%r13d	<->	mov    (%r14),%r8
+push   %r12	<->	add    %gs:0xdbc8,%r8
+push   %rbp	<->	mov    0x8(%r8),%rdx
+mov    %rdi,%rbp	<->	mov    (%r8),%r12
+---	<->	test   %r12,%r12
+push   %rbx	<->	je     0xc8
+push   %r8	<->	movslq 0x20(%r14),%rax
+mov    0x593e37(%rip),%r12d        # 0xffffffff8166fa38	<->	mov    (%r14),%r8
+and    %esi,%r12d	<->	test   $0xf,%r8b
+
+Right Match======>
+Anchor: 11, Score: -1, Match: 1, Mismatch: 3, Gap: 0
+callq  0xffffffff810da4c1 <cache_alloc_debugcheck_before>	<->	jne    0x107
+mov    %r12d,%esi	<->	lea    0x1(%rdx),%rcx
+mov    %rbp,%rdi	<->	mov    %r12,%rax
+callq  0xffffffff810dafa8 <____cache_alloc>	<->	gs
+
+Total Match===========>
+Anchor: 11, Score: 0, Match: 5, Mismatch: 10, Gap: 1
+push   %r14	<->	outsl  %ds:(%rsi),(%dx)
+push   %r13	<->	cmp    %ecx,0x0(%rdx)
+mov    %esi,%r13d	<->	mov    (%r14),%r8
+push   %r12	<->	add    %gs:0xdbc8,%r8
+push   %rbp	<->	mov    0x8(%r8),%rdx
+mov    %rdi,%rbp	<->	mov    (%r8),%r12
+---	<->	test   %r12,%r12
+push   %rbx	<->	je     0xc8
+push   %r8	<->	movslq 0x20(%r14),%rax
+mov    0x593e37(%rip),%r12d        # 0xffffffff8166fa38	<->	mov    (%r14),%r8
+and    %esi,%r12d	<->	test   $0xf,%r8b
+mov    %r12d,%edi	<->	mov    (%r12,%rax,1),%rbx     <-- trapping instruction
+callq  0xffffffff810da4c1 <cache_alloc_debugcheck_before>	<->	jne    0x107
+mov    %r12d,%esi	<->	lea    0x1(%rdx),%rcx
+mov    %rbp,%rdi	<->	mov    %r12,%rax
+callq  0xffffffff810dafa8 <____cache_alloc>	<->	gs
+
+**********************
+Left Match======>
+Anchor: 13, Score: 1, Match: 4, Mismatch: 7, Gap: 1
+push   %r14	<->	outsl  %ds:(%rsi),(%dx)
+push   %r13	<->	cmp    %ecx,0x0(%rdx)
+mov    %esi,%r13d	<->	mov    (%r14),%r8
+push   %r12	<->	add    %gs:0xdbc8,%r8
+push   %rbp	<->	mov    0x8(%r8),%rdx
+mov    %rdi,%rbp	<->	mov    (%r8),%r12
+push   %rbx	<->	test   %r12,%r12
+push   %r8	<->	je     0xc8
+mov    0x593e37(%rip),%r12d        # 0xffffffff8166fa38	<->	movslq 0x20(%r14),%rax
+and    %esi,%r12d	<->	---
+mov    %r12d,%edi	<->	mov    (%r14),%r8
+callq  0xffffffff810da4c1 <cache_alloc_debugcheck_before>	<->	test   $0xf,%r8b
+
+Right Match======>
+Anchor: 13, Score: -1, Match: 1, Mismatch: 3, Gap: 0
+mov    %rbp,%rdi	<->	jne    0x107
+callq  0xffffffff810dafa8 <____cache_alloc>	<->	lea    0x1(%rdx),%rcx
+mov    %r14,%rdi	<->	mov    %r12,%rax
+mov    %rax,%rbx	<->	gs
+
+Total Match===========>
+Anchor: 13, Score: 2, Match: 6, Mismatch: 10, Gap: 1
+push   %r14	<->	outsl  %ds:(%rsi),(%dx)
+push   %r13	<->	cmp    %ecx,0x0(%rdx)
+mov    %esi,%r13d	<->	mov    (%r14),%r8
+push   %r12	<->	add    %gs:0xdbc8,%r8
+push   %rbp	<->	mov    0x8(%r8),%rdx
+mov    %rdi,%rbp	<->	mov    (%r8),%r12
+push   %rbx	<->	test   %r12,%r12
+push   %r8	<->	je     0xc8
+mov    0x593e37(%rip),%r12d        # 0xffffffff8166fa38	<->	movslq 0x20(%r14),%rax
+and    %esi,%r12d	<->	---
+mov    %r12d,%edi	<->	mov    (%r14),%r8
+callq  0xffffffff810da4c1 <cache_alloc_debugcheck_before>	<->	test   $0xf,%r8b
+mov    %r12d,%esi	<->	mov    (%r12,%rax,1),%rbx     <-- trapping instruction
+mov    %rbp,%rdi	<->	jne    0x107
+callq  0xffffffff810dafa8 <____cache_alloc>	<->	lea    0x1(%rdx),%rcx
+mov    %r14,%rdi	<->	mov    %r12,%rax
+mov    %rax,%rbx	<->	gs
+
+**********************
+Left Match======>
+Anchor: 14, Score: 1, Match: 5, Mismatch: 4, Gap: 6
+push   %r14	<->	outsl  %ds:(%rsi),(%dx)
+push   %r13	<->	cmp    %ecx,0x0(%rdx)
+mov    %esi,%r13d	<->	mov    (%r14),%r8
+push   %r12	<->	---
+push   %rbp	<->	add    %gs:0xdbc8,%r8
+mov    %rdi,%rbp	<->	mov    0x8(%r8),%rdx
+push   %rbx	<->	---
+push   %r8	<->	---
+mov    0x593e37(%rip),%r12d        # 0xffffffff8166fa38	<->	mov    (%r8),%r12
+---	<->	test   %r12,%r12
+and    %esi,%r12d	<->	je     0xc8
+mov    %r12d,%edi	<->	movslq 0x20(%r14),%rax
+callq  0xffffffff810da4c1 <cache_alloc_debugcheck_before>	<->	---
+mov    %r12d,%esi	<->	mov    (%r14),%r8
+---	<->	test   $0xf,%r8b
+
+Right Match======>
+Anchor: 14, Score: -1, Match: 1, Mismatch: 3, Gap: 0
+callq  0xffffffff810dafa8 <____cache_alloc>	<->	jne    0x107
+mov    %r14,%rdi	<->	lea    0x1(%rdx),%rcx
+mov    %rax,%rbx	<->	mov    %r12,%rax
+callq  0xffffffff810da1d8 <arch_local_irq_restore>	<->	gs
+
+Total Match===========>
+Anchor: 14, Score: 2, Match: 7, Mismatch: 7, Gap: 6
+push   %r14	<->	outsl  %ds:(%rsi),(%dx)
+push   %r13	<->	cmp    %ecx,0x0(%rdx)
+mov    %esi,%r13d	<->	mov    (%r14),%r8
+push   %r12	<->	---
+push   %rbp	<->	add    %gs:0xdbc8,%r8
+mov    %rdi,%rbp	<->	mov    0x8(%r8),%rdx
+push   %rbx	<->	---
+push   %r8	<->	---
+mov    0x593e37(%rip),%r12d        # 0xffffffff8166fa38	<->	mov    (%r8),%r12
+---	<->	test   %r12,%r12
+and    %esi,%r12d	<->	je     0xc8
+mov    %r12d,%edi	<->	movslq 0x20(%r14),%rax
+callq  0xffffffff810da4c1 <cache_alloc_debugcheck_before>	<->	---
+mov    %r12d,%esi	<->	mov    (%r14),%r8
+---	<->	test   $0xf,%r8b
+mov    %rbp,%rdi	<->	mov    (%r12,%rax,1),%rbx     <-- trapping instruction
+callq  0xffffffff810dafa8 <____cache_alloc>	<->	jne    0x107
+mov    %r14,%rdi	<->	lea    0x1(%rdx),%rcx
+mov    %rax,%rbx	<->	mov    %r12,%rax
+callq  0xffffffff810da1d8 <arch_local_irq_restore>	<->	gs
+
+**********************
+Left Match======>
+Anchor: 16, Score: 3, Match: 5, Mismatch: 5, Gap: 3
+push   %r12	<->	outsl  %ds:(%rsi),(%dx)
+push   %rbp	<->	cmp    %ecx,0x0(%rdx)
+mov    %rdi,%rbp	<->	mov    (%r14),%r8
+push   %rbx	<->	---
+push   %r8	<->	add    %gs:0xdbc8,%r8
+mov    0x593e37(%rip),%r12d        # 0xffffffff8166fa38	<->	mov    0x8(%r8),%rdx
+and    %esi,%r12d	<->	---
+mov    %r12d,%edi	<->	mov    (%r8),%r12
+---	<->	test   %r12,%r12
+callq  0xffffffff810da4c1 <cache_alloc_debugcheck_before>	<->	je     0xc8
+mov    %r12d,%esi	<->	movslq 0x20(%r14),%rax
+mov    %rbp,%rdi	<->	mov    (%r14),%r8
+callq  0xffffffff810dafa8 <____cache_alloc>	<->	test   $0xf,%r8b
+
+Right Match======>
+Anchor: 16, Score: -1, Match: 1, Mismatch: 3, Gap: 0
+mov    %rax,%rbx	<->	jne    0x107
+callq  0xffffffff810da1d8 <arch_local_irq_restore>	<->	lea    0x1(%rdx),%rcx
+mov    %rbx,%rdi	<->	mov    %r12,%rax
+callq  0xffffffff810da1f0 <prefetchw>	<->	gs
+
+Total Match===========>
+Anchor: 16, Score: 4, Match: 7, Mismatch: 8, Gap: 3
+push   %r12	<->	outsl  %ds:(%rsi),(%dx)
+push   %rbp	<->	cmp    %ecx,0x0(%rdx)
+mov    %rdi,%rbp	<->	mov    (%r14),%r8
+push   %rbx	<->	---
+push   %r8	<->	add    %gs:0xdbc8,%r8
+mov    0x593e37(%rip),%r12d        # 0xffffffff8166fa38	<->	mov    0x8(%r8),%rdx
+and    %esi,%r12d	<->	---
+mov    %r12d,%edi	<->	mov    (%r8),%r12
+---	<->	test   %r12,%r12
+callq  0xffffffff810da4c1 <cache_alloc_debugcheck_before>	<->	je     0xc8
+mov    %r12d,%esi	<->	movslq 0x20(%r14),%rax
+mov    %rbp,%rdi	<->	mov    (%r14),%r8
+callq  0xffffffff810dafa8 <____cache_alloc>	<->	test   $0xf,%r8b
+mov    %r14,%rdi	<->	mov    (%r12,%rax,1),%rbx     <-- trapping instruction
+mov    %rax,%rbx	<->	jne    0x107
+callq  0xffffffff810da1d8 <arch_local_irq_restore>	<->	lea    0x1(%rdx),%rcx
+mov    %rbx,%rdi	<->	mov    %r12,%rax
+callq  0xffffffff810da1f0 <prefetchw>	<->	gs
+
+**********************
+Left Match======>
+Anchor: 17, Score: 3, Match: 5, Mismatch: 3, Gap: 5
+push   %rbx	<->	outsl  %ds:(%rsi),(%dx)
+push   %r8	<->	cmp    %ecx,0x0(%rdx)
+mov    0x593e37(%rip),%r12d        # 0xffffffff8166fa38	<->	mov    (%r14),%r8
+and    %esi,%r12d	<->	add    %gs:0xdbc8,%r8
+mov    %r12d,%edi	<->	mov    0x8(%r8),%rdx
+callq  0xffffffff810da4c1 <cache_alloc_debugcheck_before>	<->	---
+mov    %r12d,%esi	<->	mov    (%r8),%r12
+---	<->	test   %r12,%r12
+---	<->	je     0xc8
+mov    %rbp,%rdi	<->	movslq 0x20(%r14),%rax
+callq  0xffffffff810dafa8 <____cache_alloc>	<->	---
+mov    %r14,%rdi	<->	mov    (%r14),%r8
+---	<->	test   $0xf,%r8b
+
+Right Match======>
+Anchor: 17, Score: -1, Match: 1, Mismatch: 2, Gap: 1
+callq  0xffffffff810da1d8 <arch_local_irq_restore>	<->	jne    0x107
+---	<->	lea    0x1(%rdx),%rcx
+mov    %rbx,%rdi	<->	mov    %r12,%rax
+callq  0xffffffff810da1f0 <prefetchw>	<->	gs
+
+Total Match===========>
+Anchor: 17, Score: 4, Match: 7, Mismatch: 5, Gap: 6
+push   %rbx	<->	outsl  %ds:(%rsi),(%dx)
+push   %r8	<->	cmp    %ecx,0x0(%rdx)
+mov    0x593e37(%rip),%r12d        # 0xffffffff8166fa38	<->	mov    (%r14),%r8
+and    %esi,%r12d	<->	add    %gs:0xdbc8,%r8
+mov    %r12d,%edi	<->	mov    0x8(%r8),%rdx
+callq  0xffffffff810da4c1 <cache_alloc_debugcheck_before>	<->	---
+mov    %r12d,%esi	<->	mov    (%r8),%r12
+---	<->	test   %r12,%r12
+---	<->	je     0xc8
+mov    %rbp,%rdi	<->	movslq 0x20(%r14),%rax
+callq  0xffffffff810dafa8 <____cache_alloc>	<->	---
+mov    %r14,%rdi	<->	mov    (%r14),%r8
+---	<->	test   $0xf,%r8b
+mov    %rax,%rbx	<->	mov    (%r12,%rax,1),%rbx     <-- trapping instruction
+callq  0xffffffff810da1d8 <arch_local_irq_restore>	<->	jne    0x107
+---	<->	lea    0x1(%rdx),%rcx
+mov    %rbx,%rdi	<->	mov    %r12,%rax
+callq  0xffffffff810da1f0 <prefetchw>	<->	gs
+
+**********************
+Left Match======>
+Anchor: 19, Score: 4, Match: 5, Mismatch: 6, Gap: 1
+push   %rbx	<->	outsl  %ds:(%rsi),(%dx)
+push   %r8	<->	cmp    %ecx,0x0(%rdx)
+mov    0x593e37(%rip),%r12d        # 0xffffffff8166fa38	<->	mov    (%r14),%r8
+and    %esi,%r12d	<->	add    %gs:0xdbc8,%r8
+mov    %r12d,%edi	<->	mov    0x8(%r8),%rdx
+callq  0xffffffff810da4c1 <cache_alloc_debugcheck_before>	<->	---
+mov    %r12d,%esi	<->	mov    (%r8),%r12
+mov    %rbp,%rdi	<->	test   %r12,%r12
+callq  0xffffffff810dafa8 <____cache_alloc>	<->	je     0xc8
+mov    %r14,%rdi	<->	movslq 0x20(%r14),%rax
+mov    %rax,%rbx	<->	mov    (%r14),%r8
+callq  0xffffffff810da1d8 <arch_local_irq_restore>	<->	test   $0xf,%r8b
+
+Right Match======>
+Anchor: 19, Score: 0, Match: 3, Mismatch: 1, Gap: 5
+callq  0xffffffff810da1f0 <prefetchw>	<->	---
+and    $0x8000,%r12d	<->	---
+je     0xffffffff810dbc50 <kmem_cache_alloc+104>	<->	jne    0x107
+test   %rbx,%rbx	<->	lea    0x1(%rdx),%rcx
+je     0xffffffff810dbc50 <kmem_cache_alloc+104>	<->	---
+movslq 0x6c(%rbp),%rcx	<->	mov    %r12,%rax
+xor    %eax,%eax	<->	---
+mov    %rbx,%rdi	<->	---
+rep stos %al,%es:(%rdi)	<->	gs
+
+Total Match===========>
+Anchor: 19, Score: 6, Match: 9, Mismatch: 7, Gap: 6
+push   %rbx	<->	outsl  %ds:(%rsi),(%dx)
+push   %r8	<->	cmp    %ecx,0x0(%rdx)
+mov    0x593e37(%rip),%r12d        # 0xffffffff8166fa38	<->	mov    (%r14),%r8
+and    %esi,%r12d	<->	add    %gs:0xdbc8,%r8
+mov    %r12d,%edi	<->	mov    0x8(%r8),%rdx
+callq  0xffffffff810da4c1 <cache_alloc_debugcheck_before>	<->	---
+mov    %r12d,%esi	<->	mov    (%r8),%r12
+mov    %rbp,%rdi	<->	test   %r12,%r12
+callq  0xffffffff810dafa8 <____cache_alloc>	<->	je     0xc8
+mov    %r14,%rdi	<->	movslq 0x20(%r14),%rax
+mov    %rax,%rbx	<->	mov    (%r14),%r8
+callq  0xffffffff810da1d8 <arch_local_irq_restore>	<->	test   $0xf,%r8b
+mov    %rbx,%rdi	<->	mov    (%r12,%rax,1),%rbx     <-- trapping instruction
+callq  0xffffffff810da1f0 <prefetchw>	<->	---
+and    $0x8000,%r12d	<->	---
+je     0xffffffff810dbc50 <kmem_cache_alloc+104>	<->	jne    0x107
+test   %rbx,%rbx	<->	lea    0x1(%rdx),%rcx
+je     0xffffffff810dbc50 <kmem_cache_alloc+104>	<->	---
+movslq 0x6c(%rbp),%rcx	<->	mov    %r12,%rax
+xor    %eax,%eax	<->	---
+mov    %rbx,%rdi	<->	---
+rep stos %al,%es:(%rdi)	<->	gs
+
+**********************
+Left Match======>
+Anchor: 25, Score: 2, Match: 6, Mismatch: 5, Gap: 5
+mov    0x593e37(%rip),%r12d        # 0xffffffff8166fa38	<->	outsl  %ds:(%rsi),(%dx)
+and    %esi,%r12d	<->	cmp    %ecx,0x0(%rdx)
+mov    %r12d,%edi	<->	mov    (%r14),%r8
+callq  0xffffffff810da4c1 <cache_alloc_debugcheck_before>	<->	add    %gs:0xdbc8,%r8
+mov    %r12d,%esi	<->	mov    0x8(%r8),%rdx
+mov    %rbp,%rdi	<->	mov    (%r8),%r12
+callq  0xffffffff810dafa8 <____cache_alloc>	<->	test   %r12,%r12
+mov    %r14,%rdi	<->	je     0xc8
+mov    %rax,%rbx	<->	movslq 0x20(%r14),%rax
+callq  0xffffffff810da1d8 <arch_local_irq_restore>	<->	---
+mov    %rbx,%rdi	<->	mov    (%r14),%r8
+callq  0xffffffff810da1f0 <prefetchw>	<->	---
+and    $0x8000,%r12d	<->	---
+je     0xffffffff810dbc50 <kmem_cache_alloc+104>	<->	---
+test   %rbx,%rbx	<->	test   $0xf,%r8b
+je     0xffffffff810dbc50 <kmem_cache_alloc+104>	<->	---
+
+Right Match======>
+Anchor: 25, Score: 2, Match: 2, Mismatch: 1, Gap: 1
+xor    %eax,%eax	<->	jne    0x107
+---	<->	lea    0x1(%rdx),%rcx
+mov    %rbx,%rdi	<->	mov    %r12,%rax
+rep stos %al,%es:(%rdi)	<->	gs
+
+Total Match===========>
+Anchor: 25, Score: 6, Match: 9, Mismatch: 6, Gap: 6
+mov    0x593e37(%rip),%r12d        # 0xffffffff8166fa38	<->	outsl  %ds:(%rsi),(%dx)
+and    %esi,%r12d	<->	cmp    %ecx,0x0(%rdx)
+mov    %r12d,%edi	<->	mov    (%r14),%r8
+callq  0xffffffff810da4c1 <cache_alloc_debugcheck_before>	<->	add    %gs:0xdbc8,%r8
+mov    %r12d,%esi	<->	mov    0x8(%r8),%rdx
+mov    %rbp,%rdi	<->	mov    (%r8),%r12
+callq  0xffffffff810dafa8 <____cache_alloc>	<->	test   %r12,%r12
+mov    %r14,%rdi	<->	je     0xc8
+mov    %rax,%rbx	<->	movslq 0x20(%r14),%rax
+callq  0xffffffff810da1d8 <arch_local_irq_restore>	<->	---
+mov    %rbx,%rdi	<->	mov    (%r14),%r8
+callq  0xffffffff810da1f0 <prefetchw>	<->	---
+and    $0x8000,%r12d	<->	---
+je     0xffffffff810dbc50 <kmem_cache_alloc+104>	<->	---
+test   %rbx,%rbx	<->	test   $0xf,%r8b
+je     0xffffffff810dbc50 <kmem_cache_alloc+104>	<->	---
+movslq 0x6c(%rbp),%rcx	<->	mov    (%r12,%rax,1),%rbx     <-- trapping instruction
+xor    %eax,%eax	<->	jne    0x107
+---	<->	lea    0x1(%rdx),%rcx
+mov    %rbx,%rdi	<->	mov    %r12,%rax
+rep stos %al,%es:(%rdi)	<->	gs
+
+**********************
+Left Match======>
+Anchor: 27, Score: 4, Match: 6, Mismatch: 3, Gap: 6
+mov    %rbp,%rdi	<->	outsl  %ds:(%rsi),(%dx)
+callq  0xffffffff810dafa8 <____cache_alloc>	<->	cmp    %ecx,0x0(%rdx)
+mov    %r14,%rdi	<->	mov    (%r14),%r8
+---	<->	add    %gs:0xdbc8,%r8
+mov    %rax,%rbx	<->	mov    0x8(%r8),%rdx
+callq  0xffffffff810da1d8 <arch_local_irq_restore>	<->	---
+mov    %rbx,%rdi	<->	mov    (%r8),%r12
+callq  0xffffffff810da1f0 <prefetchw>	<->	---
+and    $0x8000,%r12d	<->	---
+je     0xffffffff810dbc50 <kmem_cache_alloc+104>	<->	---
+test   %rbx,%rbx	<->	test   %r12,%r12
+je     0xffffffff810dbc50 <kmem_cache_alloc+104>	<->	je     0xc8
+---	<->	movslq 0x20(%r14),%rax
+movslq 0x6c(%rbp),%rcx	<->	mov    (%r14),%r8
+xor    %eax,%eax	<->	test   $0xf,%r8b
+
+Right Match======>
+Anchor: 27, Score: -1, Match: 1, Mismatch: 3, Gap: 0
+rep stos %al,%es:(%rdi)	<->	jne    0x107
+mov    0xc(%rbp),%r14d	<->	lea    0x1(%rdx),%rcx
+movslq 0x6c(%rbp),%r12	<->	mov    %r12,%rax
+mov    0x38(%rsp),%r15	<->	gs
+
+Total Match===========>
+Anchor: 27, Score: 5, Match: 8, Mismatch: 6, Gap: 6
+mov    %rbp,%rdi	<->	outsl  %ds:(%rsi),(%dx)
+callq  0xffffffff810dafa8 <____cache_alloc>	<->	cmp    %ecx,0x0(%rdx)
+mov    %r14,%rdi	<->	mov    (%r14),%r8
+---	<->	add    %gs:0xdbc8,%r8
+mov    %rax,%rbx	<->	mov    0x8(%r8),%rdx
+callq  0xffffffff810da1d8 <arch_local_irq_restore>	<->	---
+mov    %rbx,%rdi	<->	mov    (%r8),%r12
+callq  0xffffffff810da1f0 <prefetchw>	<->	---
+and    $0x8000,%r12d	<->	---
+je     0xffffffff810dbc50 <kmem_cache_alloc+104>	<->	---
+test   %rbx,%rbx	<->	test   %r12,%r12
+je     0xffffffff810dbc50 <kmem_cache_alloc+104>	<->	je     0xc8
+---	<->	movslq 0x20(%r14),%rax
+movslq 0x6c(%rbp),%rcx	<->	mov    (%r14),%r8
+xor    %eax,%eax	<->	test   $0xf,%r8b
+mov    %rbx,%rdi	<->	mov    (%r12,%rax,1),%rbx     <-- trapping instruction
+rep stos %al,%es:(%rdi)	<->	jne    0x107
+mov    0xc(%rbp),%r14d	<->	lea    0x1(%rdx),%rcx
+movslq 0x6c(%rbp),%r12	<->	mov    %r12,%rax
+mov    0x38(%rsp),%r15	<->	gs
+
+**********************
+Left Match======>
+Anchor: 29, Score: 6, Match: 7, Mismatch: 3, Gap: 6
+mov    %rbp,%rdi	<->	outsl  %ds:(%rsi),(%dx)
+callq  0xffffffff810dafa8 <____cache_alloc>	<->	cmp    %ecx,0x0(%rdx)
+mov    %r14,%rdi	<->	mov    (%r14),%r8
+---	<->	add    %gs:0xdbc8,%r8
+mov    %rax,%rbx	<->	mov    0x8(%r8),%rdx
+callq  0xffffffff810da1d8 <arch_local_irq_restore>	<->	---
+mov    %rbx,%rdi	<->	mov    (%r8),%r12
+callq  0xffffffff810da1f0 <prefetchw>	<->	---
+and    $0x8000,%r12d	<->	---
+je     0xffffffff810dbc50 <kmem_cache_alloc+104>	<->	---
+test   %rbx,%rbx	<->	test   %r12,%r12
+je     0xffffffff810dbc50 <kmem_cache_alloc+104>	<->	je     0xc8
+movslq 0x6c(%rbp),%rcx	<->	movslq 0x20(%r14),%rax
+xor    %eax,%eax	<->	---
+mov    %rbx,%rdi	<->	mov    (%r14),%r8
+rep stos %al,%es:(%rdi)	<->	test   $0xf,%r8b
+
+Right Match======>
+Anchor: 29, Score: -1, Match: 1, Mismatch: 2, Gap: 1
+movslq 0x6c(%rbp),%r12	<->	jne    0x107
+---	<->	lea    0x1(%rdx),%rcx
+mov    0x38(%rsp),%r15	<->	mov    %r12,%rax
+pop    %rsi	<->	gs
+
+Total Match===========>
+Anchor: 29, Score: 7, Match: 9, Mismatch: 5, Gap: 7
+mov    %rbp,%rdi	<->	outsl  %ds:(%rsi),(%dx)
+callq  0xffffffff810dafa8 <____cache_alloc>	<->	cmp    %ecx,0x0(%rdx)
+mov    %r14,%rdi	<->	mov    (%r14),%r8
+---	<->	add    %gs:0xdbc8,%r8
+mov    %rax,%rbx	<->	mov    0x8(%r8),%rdx
+callq  0xffffffff810da1d8 <arch_local_irq_restore>	<->	---
+mov    %rbx,%rdi	<->	mov    (%r8),%r12
+callq  0xffffffff810da1f0 <prefetchw>	<->	---
+and    $0x8000,%r12d	<->	---
+je     0xffffffff810dbc50 <kmem_cache_alloc+104>	<->	---
+test   %rbx,%rbx	<->	test   %r12,%r12
+je     0xffffffff810dbc50 <kmem_cache_alloc+104>	<->	je     0xc8
+movslq 0x6c(%rbp),%rcx	<->	movslq 0x20(%r14),%rax
+xor    %eax,%eax	<->	---
+mov    %rbx,%rdi	<->	mov    (%r14),%r8
+rep stos %al,%es:(%rdi)	<->	test   $0xf,%r8b
+mov    0xc(%rbp),%r14d	<->	mov    (%r12,%rax,1),%rbx     <-- trapping instruction
+movslq 0x6c(%rbp),%r12	<->	jne    0x107
+---	<->	lea    0x1(%rdx),%rcx
+mov    0x38(%rsp),%r15	<->	mov    %r12,%rax
+pop    %rsi	<->	gs
+
+**********************
+Left Match======>
+Anchor: 30, Score: 5, Match: 7, Mismatch: 2, Gap: 9
+mov    %rbp,%rdi	<->	outsl  %ds:(%rsi),(%dx)
+callq  0xffffffff810dafa8 <____cache_alloc>	<->	cmp    %ecx,0x0(%rdx)
+mov    %r14,%rdi	<->	mov    (%r14),%r8
+---	<->	add    %gs:0xdbc8,%r8
+mov    %rax,%rbx	<->	mov    0x8(%r8),%rdx
+callq  0xffffffff810da1d8 <arch_local_irq_restore>	<->	---
+mov    %rbx,%rdi	<->	mov    (%r8),%r12
+callq  0xffffffff810da1f0 <prefetchw>	<->	---
+and    $0x8000,%r12d	<->	---
+je     0xffffffff810dbc50 <kmem_cache_alloc+104>	<->	---
+test   %rbx,%rbx	<->	test   %r12,%r12
+je     0xffffffff810dbc50 <kmem_cache_alloc+104>	<->	je     0xc8
+movslq 0x6c(%rbp),%rcx	<->	movslq 0x20(%r14),%rax
+xor    %eax,%eax	<->	---
+mov    %rbx,%rdi	<->	---
+rep stos %al,%es:(%rdi)	<->	---
+mov    0xc(%rbp),%r14d	<->	mov    (%r14),%r8
+---	<->	test   $0xf,%r8b
+
+Right Match======>
+Anchor: 30, Score: -1, Match: 1, Mismatch: 3, Gap: 0
+mov    0x38(%rsp),%r15	<->	jne    0x107
+pop    %rsi	<->	lea    0x1(%rdx),%rcx
+mov    %rbx,%rax	<->	mov    %r12,%rax
+pop    %rbx	<->	gs
+
+Total Match===========>
+Anchor: 30, Score: 6, Match: 9, Mismatch: 5, Gap: 9
+mov    %rbp,%rdi	<->	outsl  %ds:(%rsi),(%dx)
+callq  0xffffffff810dafa8 <____cache_alloc>	<->	cmp    %ecx,0x0(%rdx)
+mov    %r14,%rdi	<->	mov    (%r14),%r8
+---	<->	add    %gs:0xdbc8,%r8
+mov    %rax,%rbx	<->	mov    0x8(%r8),%rdx
+callq  0xffffffff810da1d8 <arch_local_irq_restore>	<->	---
+mov    %rbx,%rdi	<->	mov    (%r8),%r12
+callq  0xffffffff810da1f0 <prefetchw>	<->	---
+and    $0x8000,%r12d	<->	---
+je     0xffffffff810dbc50 <kmem_cache_alloc+104>	<->	---
+test   %rbx,%rbx	<->	test   %r12,%r12
+je     0xffffffff810dbc50 <kmem_cache_alloc+104>	<->	je     0xc8
+movslq 0x6c(%rbp),%rcx	<->	movslq 0x20(%r14),%rax
+xor    %eax,%eax	<->	---
+mov    %rbx,%rdi	<->	---
+rep stos %al,%es:(%rdi)	<->	---
+mov    0xc(%rbp),%r14d	<->	mov    (%r14),%r8
+---	<->	test   $0xf,%r8b
+movslq 0x6c(%rbp),%r12	<->	mov    (%r12,%rax,1),%rbx     <-- trapping instruction
+mov    0x38(%rsp),%r15	<->	jne    0x107
+pop    %rsi	<->	lea    0x1(%rdx),%rcx
+mov    %rbx,%rax	<->	mov    %r12,%rax
+pop    %rbx	<->	gs
+
+**********************
+Left Match======>
+Anchor: 31, Score: 5, Match: 7, Mismatch: 3, Gap: 8
+mov    %rbp,%rdi	<->	outsl  %ds:(%rsi),(%dx)
+callq  0xffffffff810dafa8 <____cache_alloc>	<->	cmp    %ecx,0x0(%rdx)
+mov    %r14,%rdi	<->	mov    (%r14),%r8
+---	<->	add    %gs:0xdbc8,%r8
+mov    %rax,%rbx	<->	mov    0x8(%r8),%rdx
+callq  0xffffffff810da1d8 <arch_local_irq_restore>	<->	---
+mov    %rbx,%rdi	<->	mov    (%r8),%r12
+callq  0xffffffff810da1f0 <prefetchw>	<->	---
+and    $0x8000,%r12d	<->	---
+je     0xffffffff810dbc50 <kmem_cache_alloc+104>	<->	---
+test   %rbx,%rbx	<->	test   %r12,%r12
+je     0xffffffff810dbc50 <kmem_cache_alloc+104>	<->	je     0xc8
+movslq 0x6c(%rbp),%rcx	<->	movslq 0x20(%r14),%rax
+xor    %eax,%eax	<->	---
+mov    %rbx,%rdi	<->	---
+rep stos %al,%es:(%rdi)	<->	---
+mov    0xc(%rbp),%r14d	<->	mov    (%r14),%r8
+movslq 0x6c(%rbp),%r12	<->	test   $0xf,%r8b
+
+Right Match======>
+Anchor: 31, Score: -1, Match: 1, Mismatch: 2, Gap: 1
+pop    %rsi	<->	jne    0x107
+---	<->	lea    0x1(%rdx),%rcx
+mov    %rbx,%rax	<->	mov    %r12,%rax
+pop    %rbx	<->	gs
+
+Total Match===========>
+Anchor: 31, Score: 6, Match: 9, Mismatch: 5, Gap: 9
+mov    %rbp,%rdi	<->	outsl  %ds:(%rsi),(%dx)
+callq  0xffffffff810dafa8 <____cache_alloc>	<->	cmp    %ecx,0x0(%rdx)
+mov    %r14,%rdi	<->	mov    (%r14),%r8
+---	<->	add    %gs:0xdbc8,%r8
+mov    %rax,%rbx	<->	mov    0x8(%r8),%rdx
+callq  0xffffffff810da1d8 <arch_local_irq_restore>	<->	---
+mov    %rbx,%rdi	<->	mov    (%r8),%r12
+callq  0xffffffff810da1f0 <prefetchw>	<->	---
+and    $0x8000,%r12d	<->	---
+je     0xffffffff810dbc50 <kmem_cache_alloc+104>	<->	---
+test   %rbx,%rbx	<->	test   %r12,%r12
+je     0xffffffff810dbc50 <kmem_cache_alloc+104>	<->	je     0xc8
+movslq 0x6c(%rbp),%rcx	<->	movslq 0x20(%r14),%rax
+xor    %eax,%eax	<->	---
+mov    %rbx,%rdi	<->	---
+rep stos %al,%es:(%rdi)	<->	---
+mov    0xc(%rbp),%r14d	<->	mov    (%r14),%r8
+movslq 0x6c(%rbp),%r12	<->	test   $0xf,%r8b
+mov    0x38(%rsp),%r15	<->	mov    (%r12,%rax,1),%rbx     <-- trapping instruction
+pop    %rsi	<->	jne    0x107
+---	<->	lea    0x1(%rdx),%rcx
+mov    %rbx,%rax	<->	mov    %r12,%rax
+pop    %rbx	<->	gs
+
+**********************
+Left Match======>
+Anchor: 33, Score: 7, Match: 5, Mismatch: 4, Gap: 3
+test   %rbx,%rbx	<->	outsl  %ds:(%rsi),(%dx)
+je     0xffffffff810dbc50 <kmem_cache_alloc+104>	<->	cmp    %ecx,0x0(%rdx)
+movslq 0x6c(%rbp),%rcx	<->	mov    (%r14),%r8
+xor    %eax,%eax	<->	add    %gs:0xdbc8,%r8
+mov    %rbx,%rdi	<->	mov    0x8(%r8),%rdx
+rep stos %al,%es:(%rdi)	<->	---
+mov    0xc(%rbp),%r14d	<->	mov    (%r8),%r12
+---	<->	test   %r12,%r12
+---	<->	je     0xc8
+movslq 0x6c(%rbp),%r12	<->	movslq 0x20(%r14),%rax
+mov    0x38(%rsp),%r15	<->	mov    (%r14),%r8
+pop    %rsi	<->	test   $0xf,%r8b
+
+Right Match======>
+Anchor: 33, Score: -4, Match: 0, Mismatch: 4, Gap: 0
+pop    %rbx	<->	jne    0x107
+pop    %rbp	<->	lea    0x1(%rdx),%rcx
+pop    %r12	<->	mov    %r12,%rax
+pop    %r13	<->	gs
+
+Total Match===========>
+Anchor: 33, Score: 5, Match: 6, Mismatch: 8, Gap: 3
+test   %rbx,%rbx	<->	outsl  %ds:(%rsi),(%dx)
+je     0xffffffff810dbc50 <kmem_cache_alloc+104>	<->	cmp    %ecx,0x0(%rdx)
+movslq 0x6c(%rbp),%rcx	<->	mov    (%r14),%r8
+xor    %eax,%eax	<->	add    %gs:0xdbc8,%r8
+mov    %rbx,%rdi	<->	mov    0x8(%r8),%rdx
+rep stos %al,%es:(%rdi)	<->	---
+mov    0xc(%rbp),%r14d	<->	mov    (%r8),%r12
+---	<->	test   %r12,%r12
+---	<->	je     0xc8
+movslq 0x6c(%rbp),%r12	<->	movslq 0x20(%r14),%rax
+mov    0x38(%rsp),%r15	<->	mov    (%r14),%r8
+pop    %rsi	<->	test   $0xf,%r8b
+mov    %rbx,%rax	<->	mov    (%r12,%rax,1),%rbx     <-- trapping instruction
+pop    %rbx	<->	jne    0x107
+pop    %rbp	<->	lea    0x1(%rdx),%rcx
+pop    %r12	<->	mov    %r12,%rax
+pop    %r13	<->	gs
+
+**********************
+Score List:
+Anchor: 3	Score: -10,	Confidence: 0.166667, Match: 2, Mismatch: 6, Gap: 8
+Anchor: 6	Score: -7,	Confidence: 0.222222, Match: 3, Mismatch: 8, Gap: 5
+Anchor: 9	Score: -4,	Confidence: 0.275862, Match: 4, Mismatch: 9, Gap: 3
+Anchor: 11	Score: 0,	Confidence: 0.322581, Match: 5, Mismatch: 10, Gap: 1
+Anchor: 13	Score: 2,	Confidence: 0.363636, Match: 6, Mismatch: 10, Gap: 1
+Anchor: 14	Score: 2,	Confidence: 0.411765, Match: 7, Mismatch: 7, Gap: 6
+Anchor: 16	Score: 4,	Confidence: 0.424242, Match: 7, Mismatch: 8, Gap: 3
+Anchor: 17	Score: 4,	Confidence: 0.466667, Match: 7, Mismatch: 5, Gap: 6
+Anchor: 19	Score: 6,	Confidence: 0.473684, Match: 9, Mismatch: 7, Gap: 6
+Anchor: 25	Score: 6,	Confidence: 0.500000, Match: 9, Mismatch: 6, Gap: 6
+Anchor: 27	Score: 5,	Confidence: 0.470588, Match: 8, Mismatch: 6, Gap: 6
+Anchor: 29	Score: 7,	Confidence: 0.514286, Match: 9, Mismatch: 5, Gap: 7
+Anchor: 30	Score: 6,	Confidence: 0.486486, Match: 9, Mismatch: 5, Gap: 9
+Anchor: 31	Score: 6,	Confidence: 0.486486, Match: 9, Mismatch: 5, Gap: 9
+Anchor: 33	Score: 5,	Confidence: 0.387097, Match: 6, Mismatch: 8, Gap: 3
+
+Best Match Anchor: 29, Score: 7, Match: 9, Mismatch: 5, Gap: 7
+mov    %rbp,%rdi	<->	outsl  %ds:(%rsi),(%dx)
+callq  0xffffffff810dafa8 <____cache_alloc>	<->	cmp    %ecx,0x0(%rdx)
+mov    %r14,%rdi	<->	mov    (%r14),%r8
+---	<->	add    %gs:0xdbc8,%r8
+mov    %rax,%rbx	<->	mov    0x8(%r8),%rdx
+callq  0xffffffff810da1d8 <arch_local_irq_restore>	<->	---
+mov    %rbx,%rdi	<->	mov    (%r8),%r12
+callq  0xffffffff810da1f0 <prefetchw>	<->	---
+and    $0x8000,%r12d	<->	---
+je     0xffffffff810dbc50 <kmem_cache_alloc+104>	<->	---
+test   %rbx,%rbx	<->	test   %r12,%r12
+je     0xffffffff810dbc50 <kmem_cache_alloc+104>	<->	je     0xc8
+movslq 0x6c(%rbp),%rcx	<->	movslq 0x20(%r14),%rax
+xor    %eax,%eax	<->	---
+mov    %rbx,%rdi	<->	mov    (%r14),%r8
+rep stos %al,%es:(%rdi)	<->	test   $0xf,%r8b
+mov    0xc(%rbp),%r14d	<->	mov    (%r12,%rax,1),%rbx     <-- trapping instruction
+movslq 0x6c(%rbp),%r12	<->	jne    0x107
+---	<->	lea    0x1(%rdx),%rcx
+mov    0x38(%rsp),%r15	<->	mov    %r12,%rax
+pop    %rsi	<->	gs
+
+Relative Confidence: 0.744898
+
+Best_Match_Index: 110, Score: 7, Match: 9, Mismatch: 5, Gap: 7
+Offending_Line:
+
+3845:cachep->object_size, cachep->size, flags);
+[0]:	0xffffffff810dbc56 <+110> mov    0xc(%rbp),%r14d
+[1]:	0xffffffff810dbc5a <+114> movslq 0x6c(%rbp),%r12

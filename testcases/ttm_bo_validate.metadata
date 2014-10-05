@@ -1,0 +1,44 @@
+
+URL:
+http://oops.kernel.org/oops/bug-unable-to-handle-kernel-null-pointer-dereference-at-ttm_bo_validate/
+
+
+There seems to be certain inconsistency between the generated *.asm and the code snippet. 
+
+The code snippet is in x86_64 while, the *.asm and *.lst are generated from the i386 image. 
+
+
+The trapping instruction appears after the third <test> instruction. While the result given by matching also follows the third <test> instruction. 
+
+The relative confidence of the result is NOT so high though. 
+
+
+
+The <mov 0xc(%rdx), %esi> and <mov (%rsi, %rcx, 4), %ecx> are quite DISTINCT. 
+
+The <and> are the MOST distinct instruction !
+
+The <mov 0x50(%rbx), %eax>  and <and %eax, %ecx> construct a logic block. 
+
+The "mov" instruction prepares the "%eax" operand for the "and" instruction. However, it failed, since the "0x50(%rbx)" address is NULL. 
+
+
+The "counterpart" instruction should be 
+<+121> mov 0x18(%ebp), %ecx 
+
+And the corresponding source code should be: 
+
+  1117            if ((placement->placement[i] & mem->placement &
+     0x00001d19 <+115>:   mov    0xc(%edx),%ecx
+     0x00001d1c <+118>:   mov    (%ecx,%eax,4),%esi
+     0x00001d1f <+121>:   mov    0x18(%ebp),%ecx
+     0x00001d22 <+124>:   mov    %esi,%edi
+     0x00001d24 <+126>:   and    %ecx,%edi
+     0x00001d26 <+128>:   test   $0x70000,%edi
+     0x00001d2c <+134>:   je     0x1d33 <ttm_bo_validate+141>
+
+
+I suspect the "mem->placement" is NULL. 
+
+
+

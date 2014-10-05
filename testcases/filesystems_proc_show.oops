@@ -1,0 +1,32 @@
+BUG: unable to handle kernel NULL pointer dereference at 0000000c
+IP: [<c10f1705>] filesystems_proc_show+0x16/0x4e
+*pdpt = 00000000349ab001 *pde = 0000000000000000 
+Oops: 0000 [#1] SMP 
+Modules linked in: mga drm ip6table_filter ip6_tables mperf iptable_filter cpufreq_conservative ip_tables cpufreq_stats ebtable_nat cpufreq_userspace ebtables cpufreq_powersave x_tables ppdev lp bnep rfcomm bluetooth rfkill crc16 arc4 ecb md4 sha256_generic hmac nls_utf8 cifs dns_resolver fscache binfmt_misc ext2 dm_crypt loop fuse snd_wavefront snd_cs4236 snd_via82xx snd_ac97_codec snd_opl3_lib snd_hwdep snd_wss_lib snd_pcm_oss snd_mixer_oss snd_pcm snd_mpu401 snd_mpu401_uart snd_page_alloc snd_seq_midi snd_seq_midi_event snd_rawmidi snd_seq snd_seq_device snd_timer snd soundcore i2c_viapro ac97_bus gameport i2c_core via_ircc shpchp irda crc_ccitt processor thermal_sys evdev button psmouse serio_raw pcspkr parport_pc parport ext3 mbcache jbd dm_mod md_mod sg sd_mod sr_mod cdrom crc_t10dif ata_generic pata_via floppy 8139too 8139cp mii libata uhci_hcd ehci_pci ehci_hcd scsi_mod usbcore usb_common
+Pid: 4328, comm: gnome-terminal Not tainted 3.9-1-686-pae #1 Debian 3.9.6-1    /GA-7VAX
+EIP: 0060:[<c10f1705>] EFLAGS: 00010202 CPU: 0
+EIP is at filesystems_proc_show+0x16/0x4e
+EAX: 00000000 EBX: 00000008 ECX: 00000000 EDX: c13c5c00
+ESI: f1b59a40 EDI: 00000001 EBP: 00000000 ESP: f1bd1f1c
+ DS: 007b ES: 007b FS: 00d8 GS: 00e0 SS: 0068
+CR0: 8005003b CR2: 0000000c CR3: 31b8e000 CR4: 000007f0
+DR0: 00000000 DR1: 00000000 DR2: 00000000 DR3: 00000000
+DR6: ffff0ff0 DR7: 00000400
+Process gnome-terminal
+Stack:
+ f1b59a40 00000001 c10f498f 00000400 b7744000 f1b83760 f1b59a68 00000000
+ 00000000 f1b83760 c1135562 f75444a0 c10f4833 f1b83760 f75444f0 c1119e53
+ f1bd1f9c 00000400 b7744000 f1b83760 b7744000 f1bd1f9c c1119df0 c10df5a3
+Call Trace:
+ [<c10f498f>] ? seq_read+0x15c/0x316
+ [<c1135562>] ? fsnotify_perm+0x4d/0x58
+ [<c10f4833>] ? seq_lseek+0x11b/0x11b
+ [<c1119e53>] ? proc_reg_read+0x63/0x7e
+ [<c1119df0>] ? proc_reg_write+0x7e/0x7e
+ [<c10df5a3>] ? vfs_read+0x6e/0xd5
+ [<c10df6ed>] ? sys_read+0x37/0x61
+ [<c13008cd>] ? sysenter_do_call+0x12/0x28
+Code: 00 00 00 0f 44 d8 b8 48 12 45 c1 e8 12 ff ff ff 89 d8 59 5b c3 56 89 c6 53 b8 48 12 45 c1 e8 63 ac 20 00 8b 1d 38 80 56 c1 eb 25 <f6> 43 04 01 b8 08 6e 3c c1 ff 33 ba 15 3b 3d c1 0f 44 d0 52 68
+EIP: [<c10f1705>] filesystems_proc_show+0x16/0x4e SS:ESP 0068:f1bd1f1c
+CR2: 000000000000000c
+---[ end trace 452493b77ddb58d8 ]---

@@ -1,0 +1,35 @@
+Code: 48 85 d2 74 0a 48 83 b8 f0 05 00 00 00 74 0c e8 37 f5 ff ff 5d c3 0f 1f 44 00 00 48 8b b8 08 06 00 00 48 85 ff 74 e8 48 8d 47 08 <48> 39 47 08 74 12 be 01 00 00 00 e8 c0 4f c9 ff eb d2 66 0f 1f
+All code
+========
+   0:	48 85 d2             	test   %rdx,%rdx
+   3:	74 0a                	je     0xf
+   5:	48 83 b8 f0 05 00 00 	cmpq   $0x0,0x5f0(%rax)
+   c:	00 
+   d:	74 0c                	je     0x1b
+   f:	e8 37 f5 ff ff       	callq  0xfffffffffffff54b
+  14:	5d                   	pop    %rbp
+  15:	c3                   	retq   
+  16:	0f 1f 44 00 00       	nopl   0x0(%rax,%rax,1)
+  1b:	48 8b b8 08 06 00 00 	mov    0x608(%rax),%rdi
+  22:	48 85 ff             	test   %rdi,%rdi
+  25:	74 e8                	je     0xf
+  27:	48 8d 47 08          	lea    0x8(%rdi),%rax
+  2b:*	48 39 47 08          	cmp    %rax,0x8(%rdi)     <-- trapping instruction
+  2f:	74 12                	je     0x43
+  31:	be 01 00 00 00       	mov    $0x1,%esi
+  36:	e8 c0 4f c9 ff       	callq  0xffffffffffc94ffb
+  3b:	eb d2                	jmp    0xf
+  3d:	66                   	data16
+  3e:	0f                   	.byte 0xf
+  3f:	1f                   	(bad)  
+
+Code starting with the faulting instruction
+===========================================
+   0:	48 39 47 08          	cmp    %rax,0x8(%rdi)
+   4:	74 12                	je     0x18
+   6:	be 01 00 00 00       	mov    $0x1,%esi
+   b:	e8 c0 4f c9 ff       	callq  0xffffffffffc94fd0
+  10:	eb d2                	jmp    0xffffffffffffffe4
+  12:	66                   	data16
+  13:	0f                   	.byte 0xf
+  14:	1f                   	(bad)  

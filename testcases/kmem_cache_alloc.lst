@@ -1,0 +1,254 @@
+GNU gdb (GDB) 7.4.1-debian
+Copyright (C) 2012 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.  Type "show copying"
+and "show warranty" for details.
+This GDB was configured as "x86_64-linux-gnu".
+For bug reporting instructions, please see:
+<http://www.gnu.org/software/gdb/bugs/>...
+Reading symbols from /home/guo/miparcours/pipeline/linux-3.6.11/vmlinux...done.
+(gdb) Dump of assembler code for function kmem_cache_alloc:
+3660		return ____cache_alloc(cachep, flags);
+   0xffffffff810dbc19 <+49>:	mov    %r12d,%esi
+   0xffffffff810dbc1c <+52>:	mov    %rbp,%rdi
+   0xffffffff810dbc1f <+55>:	callq  0xffffffff810dafa8 <____cache_alloc>
+   0xffffffff810dbc27 <+63>:	mov    %rax,%rbx
+
+3661	}
+3662	
+3663	#endif /* CONFIG_NUMA */
+3664	
+3665	static __always_inline void *
+3666	__cache_alloc(struct kmem_cache *cachep, gfp_t flags, void *caller)
+3667	{
+3668		unsigned long save_flags;
+3669		void *objp;
+3670	
+3671		flags &= gfp_allowed_mask;
+   0xffffffff810dbbfa <+18>:	mov    0x593e37(%rip),%r12d        # 0xffffffff8166fa38
+   0xffffffff810dbc01 <+25>:	and    %esi,%r12d
+
+3672	
+3673		lockdep_trace_alloc(flags);
+3674	
+3675		if (slab_should_failslab(cachep, flags))
+3676			return NULL;
+3677	
+3678		cache_alloc_debugcheck_before(cachep, flags);
+   0xffffffff810dbc04 <+28>:	mov    %r12d,%edi
+   0xffffffff810dbc07 <+31>:	callq  0xffffffff810da4c1 <cache_alloc_debugcheck_before>
+
+3679		local_irq_save(save_flags);
+3680		objp = __do_cache_alloc(cachep, flags);
+3681		local_irq_restore(save_flags);
+   0xffffffff810dbc24 <+60>:	mov    %r14,%rdi
+   0xffffffff810dbc2a <+66>:	callq  0xffffffff810da1d8 <arch_local_irq_restore>
+
+3682		objp = cache_alloc_debugcheck_after(cachep, flags, objp, caller);
+3683		kmemleak_alloc_recursive(objp, cachep->object_size, 1, cachep->flags,
+3684					 flags);
+3685		prefetchw(objp);
+   0xffffffff810dbc2f <+71>:	mov    %rbx,%rdi
+   0xffffffff810dbc32 <+74>:	callq  0xffffffff810da1f0 <prefetchw>
+
+3686	
+3687		if (likely(objp))
+3688			kmemcheck_slab_alloc(cachep, flags, objp, cachep->object_size);
+3689	
+3690		if (unlikely((flags & __GFP_ZERO) && objp))
+   0xffffffff810dbc37 <+79>:	and    $0x8000,%r12d
+   0xffffffff810dbc3e <+86>:	je     0xffffffff810dbc50 <kmem_cache_alloc+104>
+   0xffffffff810dbc40 <+88>:	test   %rbx,%rbx
+   0xffffffff810dbc43 <+91>:	je     0xffffffff810dbc50 <kmem_cache_alloc+104>
+
+3691			memset(objp, 0, cachep->object_size);
+   0xffffffff810dbc45 <+93>:	movslq 0x6c(%rbp),%rcx
+   0xffffffff810dbc49 <+97>:	xor    %eax,%eax
+   0xffffffff810dbc4b <+99>:	mov    %rbx,%rdi
+   0xffffffff810dbc4e <+102>:	rep stos %al,%es:(%rdi)
+
+3692	
+3693		return objp;
+3694	}
+3695	
+3696	/*
+3697	 * Caller needs to acquire correct kmem_list's list_lock
+3698	 */
+3699	static void free_block(struct kmem_cache *cachep, void **objpp, int nr_objects,
+3700			       int node)
+3701	{
+3702		int i;
+3703		struct kmem_list3 *l3;
+3704	
+3705		for (i = 0; i < nr_objects; i++) {
+3706			void *objp;
+3707			struct slab *slabp;
+3708	
+3709			clear_obj_pfmemalloc(&objpp[i]);
+3710			objp = objpp[i];
+3711	
+3712			slabp = virt_to_slab(objp);
+3713			l3 = cachep->nodelists[node];
+3714			list_del(&slabp->list);
+3715			check_spinlock_acquired_node(cachep, node);
+3716			check_slabp(cachep, slabp);
+3717			slab_put_obj(cachep, slabp, objp, node);
+3718			STATS_DEC_ACTIVE(cachep);
+3719			l3->free_objects++;
+3720			check_slabp(cachep, slabp);
+3721	
+3722			/* fixup slab chains */
+3723			if (slabp->inuse == 0) {
+3724				if (l3->free_objects > l3->free_limit) {
+3725					l3->free_objects -= cachep->num;
+3726					/* No need to drop any previously held
+3727					 * lock here, even if we have a off-slab slab
+3728					 * descriptor it is guaranteed to come from
+3729					 * a different cache, refer to comments before
+3730					 * alloc_slabmgmt.
+3731					 */
+3732					slab_destroy(cachep, slabp);
+3733				} else {
+3734					list_add(&slabp->list, &l3->slabs_free);
+3735				}
+3736			} else {
+3737				/* Unconditionally move a slab to the end of the
+3738				 * partial list on free - maximum time for the
+3739				 * other objects to be freed, too.
+3740				 */
+3741				list_add_tail(&slabp->list, &l3->slabs_partial);
+3742			}
+3743		}
+3744	}
+3745	
+3746	static void cache_flusharray(struct kmem_cache *cachep, struct array_cache *ac)
+3747	{
+3748		int batchcount;
+3749		struct kmem_list3 *l3;
+3750		int node = numa_mem_id();
+3751	
+3752		batchcount = ac->batchcount;
+3753	#if DEBUG
+3754		BUG_ON(!batchcount || batchcount > ac->avail);
+3755	#endif
+3756		check_irq_off();
+3757		l3 = cachep->nodelists[node];
+3758		spin_lock(&l3->list_lock);
+3759		if (l3->shared) {
+3760			struct array_cache *shared_array = l3->shared;
+3761			int max = shared_array->limit - shared_array->avail;
+3762			if (max) {
+3763				if (batchcount > max)
+3764					batchcount = max;
+3765				memcpy(&(shared_array->entry[shared_array->avail]),
+3766				       ac->entry, sizeof(void *) * batchcount);
+3767				shared_array->avail += batchcount;
+3768				goto free_done;
+3769			}
+3770		}
+3771	
+3772		free_block(cachep, ac->entry, batchcount, node);
+3773	free_done:
+3774	#if STATS
+3775		{
+3776			int i = 0;
+3777			struct list_head *p;
+3778	
+3779			p = l3->slabs_free.next;
+3780			while (p != &(l3->slabs_free)) {
+3781				struct slab *slabp;
+3782	
+3783				slabp = list_entry(p, struct slab, list);
+3784				BUG_ON(slabp->inuse);
+3785	
+3786				i++;
+3787				p = p->next;
+3788			}
+3789			STATS_SET_FREEABLE(cachep, i);
+3790		}
+3791	#endif
+3792		spin_unlock(&l3->list_lock);
+3793		ac->avail -= batchcount;
+3794		memmove(ac->entry, &(ac->entry[batchcount]), sizeof(void *)*ac->avail);
+3795	}
+3796	
+3797	/*
+3798	 * Release an obj back to its cache. If the obj has a constructed state, it must
+3799	 * be in this state _before_ it is released.  Called with disabled ints.
+3800	 */
+3801	static inline void __cache_free(struct kmem_cache *cachep, void *objp,
+3802	    void *caller)
+3803	{
+3804		struct array_cache *ac = cpu_cache_get(cachep);
+3805	
+3806		check_irq_off();
+3807		kmemleak_free_recursive(objp, cachep->flags);
+3808		objp = cache_free_debugcheck(cachep, objp, caller);
+3809	
+3810		kmemcheck_slab_free(cachep, objp, cachep->object_size);
+3811	
+3812		/*
+3813		 * Skip calling cache_free_alien() when the platform is not numa.
+3814		 * This will avoid cache misses that happen while accessing slabp (which
+3815		 * is per page memory  reference) to get nodeid. Instead use a global
+3816		 * variable to skip the call, which is mostly likely to be present in
+3817		 * the cache.
+3818		 */
+3819		if (nr_online_nodes > 1 && cache_free_alien(cachep, objp))
+3820			return;
+3821	
+3822		if (likely(ac->avail < ac->limit)) {
+3823			STATS_INC_FREEHIT(cachep);
+3824		} else {
+3825			STATS_INC_FREEMISS(cachep);
+3826			cache_flusharray(cachep, ac);
+3827		}
+3828	
+3829		ac_put_obj(cachep, ac, objp);
+3830	}
+3831	
+3832	/**
+3833	 * kmem_cache_alloc - Allocate an object
+3834	 * @cachep: The cache to allocate from.
+3835	 * @flags: See kmalloc().
+3836	 *
+3837	 * Allocate an object from this cache.  The flags are only relevant
+3838	 * if the cache has no available objects.
+3839	 */
+3840	void *kmem_cache_alloc(struct kmem_cache *cachep, gfp_t flags)
+3841	{
+   0xffffffff810dbbe8 <+0>:	push   %r15
+   0xffffffff810dbbea <+2>:	push   %r14
+   0xffffffff810dbbec <+4>:	push   %r13
+   0xffffffff810dbbee <+6>:	mov    %esi,%r13d
+   0xffffffff810dbbf1 <+9>:	push   %r12
+   0xffffffff810dbbf3 <+11>:	push   %rbp
+   0xffffffff810dbbf4 <+12>:	mov    %rdi,%rbp
+   0xffffffff810dbbf7 <+15>:	push   %rbx
+   0xffffffff810dbbf8 <+16>:	push   %r8
+
+3842		void *ret = __cache_alloc(cachep, flags, __builtin_return_address(0));
+3843	
+3844		trace_kmem_cache_alloc(_RET_IP_, ret,
+   0xffffffff810dbc5e <+118>:	mov    0x38(%rsp),%r15
+
+3845				       cachep->object_size, cachep->size, flags);
+   0xffffffff810dbc56 <+110>:	mov    0xc(%rbp),%r14d
+   0xffffffff810dbc5a <+114>:	movslq 0x6c(%rbp),%r12
+
+3846	
+3847		return ret;
+3848	}
+   0xffffffff810dbc96 <+174>:	pop    %rsi
+   0xffffffff810dbc97 <+175>:	mov    %rbx,%rax
+   0xffffffff810dbc9a <+178>:	pop    %rbx
+   0xffffffff810dbc9b <+179>:	pop    %rbp
+   0xffffffff810dbc9c <+180>:	pop    %r12
+   0xffffffff810dbc9e <+182>:	pop    %r13
+   0xffffffff810dbca0 <+184>:	pop    %r14
+   0xffffffff810dbca2 <+186>:	pop    %r15
+   0xffffffff810dbca4 <+188>:	retq   
+
+End of assembler dump.
+(gdb) quit

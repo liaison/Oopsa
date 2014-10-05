@@ -25,5 +25,7 @@ codeparser.mly: the grammar of parser for *.lst file and Assemble code file as w
 
 codelexer.mll : the grammar of lexer to parse the tokens/attributes. 
 
+testcases: directory that contains all relevant files for testing, including the sample input files.        
+
 
 

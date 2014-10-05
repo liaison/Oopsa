@@ -1,0 +1,46 @@
+BUG: unable to handle kernel paging request at ffff8a0122d70050
+IP: [<ffffffff812453bc>] ext4_ext_map_blocks+0xdc/0x1750
+PGD 0 
+Oops: 0000 [#1] SMP 
+Modules linked in: tcp_lp usb_storage fuse ebtable_nat nf_conntrack_netbios_ns nf_conntrack_broadcast ipt_MASQUERADE bnep bluetooth rfkill ip6table_mangle ip6t_REJECT nf_conntrack_ipv6 nf_defrag_ipv6 iptable_nat nf_nat_ipv4 nf_nat iptable_mangle nf_conntrack_ipv4 nf_defrag_ipv4 xt_conntrack nf_conntrack ebtable_filter ebtables ip6table_filter ip6_tables be2iscsi iscsi_boot_sysfs bnx2i cnic uio cxgb4i cxgb4 cxgb3i cxgb3 mdio libcxgbi ib_iser rdma_cm ib_addr iw_cm ib_cm ib_sa ib_mad ib_core iscsi_tcp libiscsi_tcp libiscsi scsi_transport_iscsi joydev snd_hda_codec_hdmi snd_hda_codec_via snd_hda_intel snd_hda_codec snd_hwdep snd_seq snd_seq_device snd_pcm snd_page_alloc snd_timer snd soundcore edac_core edac_mce_amd i2c_nforce2 k8temp ppdev parport_pc parport serio_raw vhost_net tun macvtap macvlan kvm_amd kvm uinput radeon i2c_algo_bit drm_kms_helper ttm drm ata_generic pata_acpi i2c_core sata_nv forcedeth pata_amd sunrpc
+CPU 1 
+Pid: 25659, comm: abrt-hook-ccpp Not tainted 3.7.2-204.fc18.x86_64 #1 To Be Filled By O.E.M. To Be Filled By O.E.M./N68C-GS FX
+RIP: 0010:[<ffffffff812453bc>]  [<ffffffff812453bc>] ext4_ext_map_blocks+0xdc/0x1750
+RSP: 0018:ffff88010d3eb868  EFLAGS: 00010246
+RAX: ffff8a0122d70000 RBX: ffff8800b235d940 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: ffff8800b235d940 RDI: ffff8800b235dbdc
+RBP: ffff88010d3eb958 R08: 0000000000001000 R09: 0000000000000000
+R10: ffffea00021c6f40 R11: ffffffff81215be0 R12: ffff88010d3eb9a0
+R13: 00000000000048f3 R14: 0000000000000001 R15: ffff8800b23e35b0
+FS:  00007f135fd5a7c0(0000) GS:ffff88012fc40000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 000000008005003b
+CR2: ffff8a0122d70050 CR3: 0000000103df6000 CR4: 00000000000007e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000ffff0ff0 DR7: 0000000000000400
+Process abrt-hook-ccpp
+Stack:
+ 0102005a00000000 ffff88012ffec6c0 ffffea00021c6f40 ffffea00021c6f80
+ ffff88010d3eb8f8 ffff88012ffec6c0 ffff88010d3eb908 0000000000000000
+ 0000000000000000 ffff8800b235dbdc 000000000102005a ffff8a0122d70000
+Call Trace:
+ [<ffffffff811c4721>] ? alloc_buffer_head+0x21/0x60
+ [<ffffffff81215d05>] ext4_da_get_block_prep+0x125/0x340
+ [<ffffffff811c5690>] ? create_empty_buffers+0x50/0xf0
+ [<ffffffff811c7bae>] __block_write_begin+0x1ae/0x4f0
+ [<ffffffff8114eb03>] ? __inc_zone_page_state+0x33/0x40
+ [<ffffffff81215be0>] ? __check_block_validity.constprop.50+0x80/0x80
+ [<ffffffff8125ad63>] ? jbd2_journal_start+0x13/0x20
+ [<ffffffff81218ed9>] ext4_da_write_begin+0xc9/0x1f0
+ [<ffffffff8112f196>] generic_file_buffered_write+0x116/0x280
+ [<ffffffff81090a04>] ? resched_task+0x64/0x70
+ [<ffffffff811311d1>] __generic_file_aio_write+0x1d1/0x3d0
+ [<ffffffff8113144f>] generic_file_aio_write+0x7f/0x100
+ [<ffffffff81212429>] ext4_file_write+0xa9/0x490
+ [<ffffffff81194a47>] do_sync_write+0xa7/0xe0
+ [<ffffffff811950fc>] vfs_write+0xac/0x180
+ [<ffffffff81195442>] sys_write+0x52/0xa0
+ [<ffffffff8163ded9>] system_call_fastpath+0x16/0x1b
+Code: 66 66 66 90 80 83 9c 02 00 00 01 45 85 f6 0f 84 2b 02 00 00 8b 4d 94 0f b7 45 92 85 c9 75 50 66 85 c0 75 4b 48 8b 85 68 ff ff ff <83> 78 50 01 76 17 41 8b 74 24 08 31 d2 48 89 df e8 df fe ff ff 
+RIP  [<ffffffff812453bc>] ext4_ext_map_blocks+0xdc/0x1750
+ RSP <ffff88010d3eb868>
+CR2: ffff8a0122d70050

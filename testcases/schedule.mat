@@ -1,0 +1,194 @@
+Source_Sequence:
+MVVTESEEEXXXEEETESEEEPSHPPPMPP
+Query_Sequence:
+XXXMVVTESEEELEA
+5
+CMPEEEMVVCALMPPXXXBYTXXX
+8
+Scan_List:
+0 1 2 3 4 5 6 7 8 9 
+Query_Sequence_Division:
+XXXMVVTESEEELEA|CMPEEEMVVCALMPPXXXBYTXXX
+Source_Sequence_Division:
+|MVVTESEEEXXXEEETESEEEPSHPPPMPP
+Left Match======>
+Anchor:0, Score: -5
+LEAEEETESMVVXXX
+---------------
+Right Match======>
+Anchor:0, Score: -2
+CMPEEEMVVCALMPPXXXBYTXXX------------
+------MVVTESEEEXXXEEETESEEEPSHPPPMPP
+Total Match===========>
+Anchor:0, Score: -7
+XXXMVVTESEEELEACMPEEEMVVCALMPPXXXBYTXXX------------
+---------------------MVVTESEEEXXXEEETESEEEPSHPPPMPP
+**********************
+Query_Sequence_Division:
+XXXMVVTESEEELEA|CMPEEEMVVCALMPPXXXBYTXXX
+Source_Sequence_Division:
+MVV|TESEEEXXXEEETESEEEPSHPPPMPP
+Left Match======>
+Anchor:1, Score: -2
+LEAEEETESMVVXXX
+---------MVV---
+Right Match======>
+Anchor:1, Score: -2
+CMPEEEMVVCALMPPXXXBYTXXX------------
+TESEEE---------XXXEEETESEEEPSHPPPMPP
+Total Match===========>
+Anchor:1, Score: -4
+XXXMVVTESEEELEACMPEEEMVVCALMPPXXXBYTXXX------------
+---MVV---------TESEEE---------XXXEEETESEEEPSHPPPMPP
+**********************
+Query_Sequence_Division:
+XXXMVVTESEEELEA|CMPEEEMVVCALMPPXXXBYTXXX
+Source_Sequence_Division:
+MVVTES|EEEXXXEEETESEEEPSHPPPMPP
+Left Match======>
+Anchor:2, Score: 1
+LEAEEETESMVVXXX
+------TESMVV---
+Right Match======>
+Anchor:2, Score: -2
+CMPEEEMVVCALMPPXXXBYTXXX------------
+---EEE---------XXXEEETESEEEPSHPPPMPP
+Total Match===========>
+Anchor:2, Score: -1
+XXXMVVTESEEELEACMPEEEMVVCALMPPXXXBYTXXX------------
+---MVVTES---------EEE---------XXXEEETESEEEPSHPPPMPP
+**********************
+Query_Sequence_Division:
+XXXMVVTESEEELEA|CMPEEEMVVCALMPPXXXBYTXXX
+Source_Sequence_Division:
+MVVTESEEE|XXXEEETESEEEPSHPPPMPP
+Left Match======>
+Anchor:3, Score: 4
+LEAEEETESMVVXXX
+---EEETESMVV---
+Right Match======>
+Anchor:3, Score: -4
+MVVCAL------MPPXXXBYTXXX
+TESEEEPSHPPPMPP---------
+Total Match===========>
+Anchor:3, Score: 0
+XXXMVVTESEEELEAMVVCAL------MPPXXXBYTXXX
+---MVVTESEEE---TESEEEPSHPPPMPP---------
+**********************
+Query_Sequence_Division:
+XXXMVVTESEEELEA|CMPEEEMVVCALMPPXXXBYTXXX
+Source_Sequence_Division:
+MVVTESEEEXXX|EEETESEEEPSHPPPMPP
+Left Match======>
+Anchor:4, Score: 4
+LEAEEETESMVVXXX
+XXXEEETESMVV---
+Right Match======>
+Anchor:4, Score: -3
+---EEEMVVCALMPPXXXBYTXXX
+TESEEEPSHPPPMPP---------
+Total Match===========>
+Anchor:4, Score: 1
+XXXMVVTESEEELEA---EEEMVVCALMPPXXXBYTXXX
+---MVVTESEEEXXXTESEEEPSHPPPMPP---------
+**********************
+Query_Sequence_Division:
+XXXMVVTESEEELEA|CMPEEEMVVCALMPPXXXBYTXXX
+Source_Sequence_Division:
+MVVTESEEEXXXEEE|TESEEEPSHPPPMPP
+Left Match======>
+Anchor:5, Score: 3
+---EEETESMVVXXX
+XXXEEETESMVV---
+Right Match======>
+Anchor:5, Score: -2
+CMPEEEMVVCALMPPXXXBYTXXX
+TESEEEPSHPPPMPP---------
+Total Match===========>
+Anchor:5, Score: 1
+XXXMVVTESEEE---CMPEEEMVVCALMPPXXXBYTXXX
+---MVVTESEEEXXXTESEEEPSHPPPMPP---------
+**********************
+Query_Sequence_Division:
+XXXMVVTESEEELEA|CMPEEEMVVCALMPPXXXBYTXXX
+Source_Sequence_Division:
+MVVTESEEEXXXEEETES|EEEPSHPPPMPP
+Left Match======>
+Anchor:6, Score: 2
+EEE------TESMVVXXX
+EEEXXXEEETESMVV---
+Right Match======>
+Anchor:6, Score: -2
+CMPEEEMVVCALMPPXXXBYTXXX
+---EEEPSHPPPMPP---------
+Total Match===========>
+Anchor:6, Score: 0
+XXXMVVTES------EEECMPEEEMVVCALMPPXXXBYTXXX
+---MVVTESEEEXXXEEE---EEEPSHPPPMPP---------
+**********************
+Query_Sequence_Division:
+XXXMVVTESEEELEA|CMPEEEMVVCALMPPXXXBYTXXX
+Source_Sequence_Division:
+MVVTESEEEXXXEEETESEEE|PSHPPPMPP
+Left Match======>
+Anchor:7, Score: 4
+LEAEEETESMVVXXX---------
+---EEETESEEEXXXEEETESMVV
+Right Match======>
+Anchor:7, Score: -5
+CMPEEEMVVCALMPPXXXBYTXXX
+PSHPPP------MPP---------
+Total Match===========>
+Anchor:7, Score: -1
+---------XXXMVVTESEEELEACMPEEEMVVCALMPPXXXBYTXXX
+MVVTESEEEXXXEEETESEEE---PSHPPP------MPP---------
+**********************
+Query_Sequence_Division:
+XXXMVVTESEEELEA|CMPEEEMVVCALMPPXXXBYTXXX
+Source_Sequence_Division:
+MVVTESEEEXXXEEETESEEEPSH|PPPMPP
+Left Match======>
+Anchor:8, Score: 4
+LEAEEETESMVVXXX---------
+PSHEEETESEEEXXXEEETESMVV
+Right Match======>
+Anchor:8, Score: -5
+CMPEEEMVVCALMPPXXXBYTXXX
+PPP---------MPP---------
+Total Match===========>
+Anchor:8, Score: -1
+---------XXXMVVTESEEELEACMPEEEMVVCALMPPXXXBYTXXX
+MVVTESEEEXXXEEETESEEEPSHPPP---------MPP---------
+**********************
+Query_Sequence_Division:
+XXXMVVTESEEELEA|CMPEEEMVVCALMPPXXXBYTXXX
+Source_Sequence_Division:
+MVVTESEEEXXXEEETESEEEPSHPPP|MPP
+Left Match======>
+Anchor:9, Score: 3
+LEA---EEETESMVVXXX---------
+PPPPSHEEETESEEEXXXEEETESMVV
+Right Match======>
+Anchor:9, Score: -5
+CMPEEEMVVCALMPPXXXBYTXXX
+------------MPP---------
+Total Match===========>
+Anchor:9, Score: -2
+---------XXXMVVTESEEE---LEACMPEEEMVVCALMPPXXXBYTXXX
+MVVTESEEEXXXEEETESEEEPSHPPP------------MPP---------
+**********************
+Anchor:5, Score: 1
+XXXMVVTESEEE---CMPEEEMVVCALMPPXXXBYTXXX
+---MVVTESEEEXXXTESEEEPSHPPPMPP---------
+
+Best_Match_Index:68 Score:1
+Offending_Line:
+
+2896:return;
+2897:/*
+2898:* If we are going to sleep and we have plugged IO queued,
+2899:* make sure to submit it to avoid deadlocks.
+2900:*/
+2901:if (blk_needs_flush_plug(tsk))
+0x0000000000008eb5 <+68> test   %eax,%eax
+0x0000000000008eb7 <+70> je     0x8ecc <schedule+91>

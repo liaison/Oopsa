@@ -1,0 +1,32 @@
+Code: 00 00 00 00 00 66 66 66 66 90 55 48 89 e5 48 83 ec 20 48 85 c9 48 89 5d e8 4c 89 65 f0 49 89 f4 4c 89 6d f8 48 8b 46 18 48 89 cb <48> 8b 70 30 78 5f 48 8b 0a 41 89 fd 48 85 c9 0f 88 88 00 00 00
+All code
+========
+   0:	00 00                	add    %al,(%rax)
+   2:	00 00                	add    %al,(%rax)
+   4:	00 66 66             	add    %ah,0x66(%rsi)
+   7:	66 66 90             	data32 xchg %ax,%ax
+   a:	55                   	push   %rbp
+   b:	48 89 e5             	mov    %rsp,%rbp
+   e:	48 83 ec 20          	sub    $0x20,%rsp
+  12:	48 85 c9             	test   %rcx,%rcx
+  15:	48 89 5d e8          	mov    %rbx,-0x18(%rbp)
+  19:	4c 89 65 f0          	mov    %r12,-0x10(%rbp)
+  1d:	49 89 f4             	mov    %rsi,%r12
+  20:	4c 89 6d f8          	mov    %r13,-0x8(%rbp)
+  24:	48 8b 46 18          	mov    0x18(%rsi),%rax
+  28:	48 89 cb             	mov    %rcx,%rbx
+  2b:*	48 8b 70 30          	mov    0x30(%rax),%rsi     <-- trapping instruction
+  2f:	78 5f                	js     0x90
+  31:	48 8b 0a             	mov    (%rdx),%rcx
+  34:	41 89 fd             	mov    %edi,%r13d
+  37:	48 85 c9             	test   %rcx,%rcx
+  3a:	0f 88 88 00 00 00    	js     0xc8
+
+Code starting with the faulting instruction
+===========================================
+   0:	48 8b 70 30          	mov    0x30(%rax),%rsi
+   4:	78 5f                	js     0x65
+   6:	48 8b 0a             	mov    (%rdx),%rcx
+   9:	41 89 fd             	mov    %edi,%r13d
+   c:	48 85 c9             	test   %rcx,%rcx
+   f:	0f 88 88 00 00 00    	js     0x9d

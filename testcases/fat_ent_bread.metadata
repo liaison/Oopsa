@@ -1,0 +1,7 @@
+
+URL:
+http://oops.kernel.org/oops/kernel-paging-request-at-fat_ent_bread/
+
+SRC:
+https://git.kernel.org/cgit/linux/kernel/git/stable/linux-stable.git/tree/fs/fat/fatent.c?id=v3.7.2#n102
+

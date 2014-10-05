@@ -1,0 +1,78 @@
+BUG: unable to handle kernel NULL pointer dereference at 00000001
+IP: [<f7eadc18>] ttm_bo_validate+0x68/0x120 [ttm]
+*pdpt = 0000000030f13001 *pde = 0000000000000000 
+Oops: 0002 [#2] SMP 
+Modules linked in: fuse ip6t_REJECT nf_conntrack_ipv6 nf_defrag_ipv6 ip6table_filter ip6_tables nf_conntrackipv4 nf_defrag_ipv4 xt_conntrack nf_conntrack snd_intel8x0 snd_ac97_codec ac97_bus snd_seq snd_seq_device snd_pcm sky2 snd_page_alloc ppdev snd_timer snd soundcore forcedeth i2c_nforce2 k8temp parport_pc parport nfsd auth_rpcgss nfs_acl lockd sunrpc uinput nouveau mxm_wmi wmi video i2c_algo_bit drm_kms_helper ttm firewire_ohci ata_generic drm pata_acpi i2c_core firewire_core crc_itu_t sata_nv pata_amd
+Pid: 798, comm: Xorg Tainted: G        W    3.7.6-201.fc18.i686.PAE #1 MICRO-STAR INTERNATIONAL CO., LTD MS-7125/MS-7125
+EIP: 0060:[<f7eadc18>] EFLAGS: 00213002 CPU: 0
+EIP is at ttm_bo_validate+0x68/0x120 [ttm]
+EAX: 00000000 EBX: f0ee6a00 ECX: f0ee6ad4 EDX: f0ee6ad4
+ESI: 00000000 EDI: 00000001 EBP: f5f55890 ESP: f5f55874
+ DS: 007b ES: 007b FS: 00d8 GS: 00e0 SS: 0068
+CR0: 8005003b CR2: 00000001 CR3: 2e4e3000 CR4: 000007f0
+DR0: 00000000 DR1: 00000000 DR2: 00000000 DR3: 00000000
+DR6: ffff0ff0 DR7: 00000400
+Process Xorg
+Stack:
+ 00000001 00000000 00000000 f0ee6ad4 00000000 00000000 00000000 f5f558a8
+ f80e318f 00000000 00000000 f0ee6a00 f437a8c0 f5f558c4 f80e3344 00000000
+ 00000000 f6480000 f42b4000 f429dc78 f5f5590c f80ff56f ee7e0001 00000020
+Call Trace:
+ [<f80e318f>] nouveau_bo_validate+0x2f/0x40 [nouveau]
+ [<f80e3344>] nouveau_bo_unpin+0x74/0xd0 [nouveau]
+ [<f80ff56f>] nv04_crtc_do_mode_set_base+0x7f/0x3f0 [nouveau]
+ [<c068913a>] ? snprintf+0x1a/0x20
+ [<f80ff960>] nv04_crtc_mode_set_base+0x20/0x30 [nouveau]
+ [<f7e997c6>] drm_crtc_helper_set_config+0x696/0xa60 [drm_kms_helper]
+ [<f7e96621>] drm_fb_helper_pan_display+0x71/0xb0 [drm_kms_helper]
+ [<c06bfeb9>] fb_pan_display+0xb9/0x170
+ [<c06cfcd1>] bit_update_start+0x21/0x50
+ [<c06cf79c>] fbcon_switch+0x3cc/0x580
+ [<c07362ae>] redraw_screen+0x12e/0x1f0
+ [<c0987101>] ? __do_page_fault+0x451/0x490
+ [<c06cdff5>] fbcon_blank+0x235/0x300
+ [<c0735287>] ? notify_update+0x27/0x30
+ [<c0735de0>] ? respond_string+0x90/0x90
+ [<c047337a>] ? up+0x2a/0x40
+ [<c044e9ad>] ? console_unlock+0x31d/0x460
+ [<c045b9a7>] ? __internal_add_timer+0x77/0xc0
+ [<c045c05a>] ? internal_add_timer+0x1a/0x40
+ [<c045d0cf>] ? mod_timer+0xef/0x1b0
+ [<c0736f16>] do_unblank_screen+0xa6/0x1c0
+ [<c073703f>] unblank_screen+0xf/0x20
+ [<c068bc88>] bust_spinlocks+0x18/0x40
+ [<c09848f4>] oops_end+0x34/0xd0
+ [<c097ab4e>] no_context+0x1af/0x1b7
+ [<c097ac80>] __bad_area_nosemaphore+0x12a/0x132
+ [<c044e2bd>] ? msg_print_text+0xbd/0x170
+ [<c097ac9f>] bad_area_nosemaphore+0x17/0x19
+ [<c0986fd5>] __do_page_fault+0x325/0x490
+ [<c0987140>] ? __do_page_fault+0x490/0x490
+ [<c098714d>] do_page_fault+0xd/0x10
+ [<c0984167>] error_code+0x67/0x6c
+ [<c0691e7e>] ? __list_add+0xe/0xf0
+ [<f7eac69f>] ? ttm_bo_release+0x1cf/0x1e0 [ttm]
+ [<f7eac69f>] ? ttm_bo_release+0x1cf/0x1e0 [ttm]
+ [<c044d432>] ? warn_slowpath_null+0x22/0x30
+ [<f7eac5d2>] ttm_bo_release+0x102/0x1e0 [ttm]
+ [<f7eaf34c>] ? ttm_bo_vm_close+0x1c/0x30 [ttm]
+ [<c052f12d>] remove_vma+0x2d/0x60
+ [<c0531818>] exit_mmap+0xa8/0x120
+ [<c044aed9>] mmput+0x59/0xb0
+ [<c0452af3>] exit_mm+0xe3/0x100
+ [<c0452c4f>] do_exit+0x13f/0x7f0
+ [<c0453584>] do_group_exit+0x34/0xa0
+ [<c0460c86>] get_signal_to_deliver+0x186/0x5c0
+ [<c062c13a>] ? current_has_perm+0x4a/0x50
+ [<c0411d6d>] do_signal+0x2d/0x950
+ [<c0460307>] ? do_send_specific+0x77/0xa0
+ [<c04603b4>] ? do_tkill+0x84/0xa0
+ [<c045e8d7>] ? recalc_sigpending+0x17/0x50
+ [<c045f2c5>] ? __set_task_blocked+0x35/0x80
+ [<c0555172>] ? __fput+0x142/0x1f0
+ [<c04612f3>] ? __set_current_blocked+0x33/0x50
+ [<c04bfbfc>] ? __audit_syscall_entry+0xbc/0x290
+ [<c04c0126>] ? __audit_syscall_exit+0x356/0x3b0
+ [<c0412845>] do_notify_resume+0x75/0xa0
+ [<c0983cf1>] work_notifysig+0x30/0x37
+Code: 12 39 c2 0f 87 bf 00 00 00 89 c1 29 d1 3b 4b 14 0f 82 b2 00 00 00 8b 73 38 85 f6 74 04 85 c0 75 6a 8b 55 f0 8b 7a 08 85 ff 74 2b <8b> 43 50 31 c9 8b 72 0c 31 d2 8d b6 00 00 00 00 8b 0c 8e 21 c1

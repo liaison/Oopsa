@@ -1,0 +1,29 @@
+Code: 66 66 66 90 80 83 9c 02 00 00 01 45 85 f6 0f 84 2b 02 00 00 8b 4d 94 0f b7 45 92 85 c9 75 50 66 85 c0 75 4b 48 8b 85 68 ff ff ff <83> 78 50 01 76 17 41 8b 74 24 08 31 d2 48 89 df e8 df fe ff ff
+All code
+========
+   0:	66 66 66 90          	data32 data32 xchg %ax,%ax
+   4:	80 83 9c 02 00 00 01 	addb   $0x1,0x29c(%rbx)
+   b:	45 85 f6             	test   %r14d,%r14d
+   e:	0f 84 2b 02 00 00    	je     0x23f
+  14:	8b 4d 94             	mov    -0x6c(%rbp),%ecx
+  17:	0f b7 45 92          	movzwl -0x6e(%rbp),%eax
+  1b:	85 c9                	test   %ecx,%ecx
+  1d:	75 50                	jne    0x6f
+  1f:	66 85 c0             	test   %ax,%ax
+  22:	75 4b                	jne    0x6f
+  24:	48 8b 85 68 ff ff ff 	mov    -0x98(%rbp),%rax
+  2b:*	83 78 50 01          	cmpl   $0x1,0x50(%rax)     <-- trapping instruction
+  2f:	76 17                	jbe    0x48
+  31:	41 8b 74 24 08       	mov    0x8(%r12),%esi
+  36:	31 d2                	xor    %edx,%edx
+  38:	48 89 df             	mov    %rbx,%rdi
+  3b:	e8 df fe ff ff       	callq  0xffffffffffffff1f
+
+Code starting with the faulting instruction
+===========================================
+   0:	83 78 50 01          	cmpl   $0x1,0x50(%rax)
+   4:	76 17                	jbe    0x1d
+   6:	41 8b 74 24 08       	mov    0x8(%r12),%esi
+   b:	31 d2                	xor    %edx,%edx
+   d:	48 89 df             	mov    %rbx,%rdi
+  10:	e8 df fe ff ff       	callq  0xfffffffffffffef4

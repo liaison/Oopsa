@@ -1,0 +1,22 @@
+GNU gdb (GDB) 7.4.1-debian
+Copyright (C) 2012 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.  Type "show copying"
+and "show warranty" for details.
+This GDB was configured as "x86_64-linux-gnu".
+For bug reporting instructions, please see:
+<http://www.gnu.org/software/gdb/bugs/>...
+Reading symbols from /home/guo/miparcours/pipeline/linux-3.7.6/drivers/gpu/drm/udl/udl_connector.o...done.
+(gdb) 0x196 is in udl_get_modes (drivers/gpu/drm/udl/udl_connector.c:75).
+70		edid->checksum += edid->extensions;
+71		edid->extensions = 0;
+72	
+73		drm_mode_connector_update_edid_property(connector, edid);
+74		ret = drm_add_edid_modes(connector, edid);
+75		kfree(edid);
+76		return ret;
+77	}
+78	
+79	static int udl_mode_valid(struct drm_connector *connector,
+(gdb) quit

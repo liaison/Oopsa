@@ -1,0 +1,34 @@
+general protection fault: 0000 [#1] SMP 
+Modules linked in: nf_conntrack_netbios_ns nf_conntrack_broadcast ipt_MASQUERADE ip6table_mangle bnep bluetooth rfkill ip6t_REJECT nf_conntrack_ipv6 nf_defrag_ipv6 iptable_nat nf_nat_ipv4 nf_nat iptable_mangle nf_conntrack_ipv4 nf_defrag_ipv4 xt_conntrack nf_conntrack ebtable_filter ebtables ip6table_filter ip6_tables snd_hda_codec_hdmi snd_hda_codec_realtek kvm_amd kvm snd_hda_intel snd_hda_codec microcode snd_hwdep snd_seq edac_core snd_seq_device edac_mce_amd k10temp snd_pcm wacom sp5100_tco i2c_piix4 snd_page_alloc snd_timer r8169 snd mii soundcore shpchp uinput ata_generic firewire_ohci pata_acpi radeon i2c_algo_bit drm_kms_helper firewire_core ttm crc_itu_t pata_atiixp drm i2c_core wmi
+CPU 1 
+Pid: 1944, comm: Chrome_ChildThr Not tainted 3.7.2-204.fc18.x86_64 #1 Gigabyte Technology Co., Ltd. GA-MA785G-UD3H/GA-MA785G-UD3H
+RIP: 0010:[<ffffffff81634720>]  [<ffffffff81634720>] schedule+0x40/0x70
+RSP: 0018:ffff880141e6fd98  EFLAGS: 00010206
+RAX: 0040000000000008 RBX: 0000000000000000 RCX: 0000000000000001
+RDX: 0000000000000001 RSI: 0000000000000000 RDI: 0040000000000000
+RBP: ffff880141e6fd98 R08: ffff880163590b70 R09: ffff880163590a98
+R10: 00000000ffffffff R11: 0000000000000246 R12: ffff880163590b98
+R13: ffff880163501720 R14: 0000000000000000 R15: 0000000000000000
+FS:  00007f15581d2700(0000) GS:ffff88016fc40000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 000000008005003b
+CR2: 00007f2afeb5a000 CR3: 0000000147a4e000 CR4: 00000000000007e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000ffff0ff0 DR7: 0000000000000400
+Process Chrome_ChildThr
+Stack:
+ ffff880141e6fe38 ffffffff816338dd 0000000000000000 0000000000000019
+ ffff8801479b2300 ffffffff811d8f10 ffff880141e6fe08 ffff880141e6feb0
+ 0000000000000000 0000000000000296 ffff880141e6fe48 ffffffff811d8b2d
+Call Trace:
+ [<ffffffff816338dd>] schedule_hrtimeout_range_clock+0x14d/0x170
+ [<ffffffff811d8f10>] ? ep_ptable_queue_proc+0xb0/0xb0
+ [<ffffffff811d8b2d>] ? ep_scan_ready_list.isra.8+0x19d/0x1a0
+ [<ffffffff81633913>] schedule_hrtimeout_range+0x13/0x20
+ [<ffffffff811d8de7>] ep_poll+0x297/0x310
+ [<ffffffff81093cd0>] ? try_to_wake_up+0x2d0/0x2d0
+ [<ffffffff811d9d15>] sys_epoll_wait+0xd5/0x100
+ [<ffffffff810dc77c>] ? __audit_syscall_exit+0x3ec/0x450
+ [<ffffffff8163ded9>] system_call_fastpath+0x16/0x1b
+Code: 48 85 d2 74 0a 48 83 b8 f0 05 00 00 00 74 0c e8 37 f5 ff ff 5d c3 0f 1f 44 00 00 48 8b b8 08 06 00 00 48 85 ff 74 e8 48 8d 47 08 <48> 39 47 08 74 12 be 01 00 00 00 e8 c0 4f c9 ff eb d2 66 0f 1f 
+RIP  [<ffffffff81634720>] schedule+0x40/0x70
+ RSP <ffff880141e6fd98>

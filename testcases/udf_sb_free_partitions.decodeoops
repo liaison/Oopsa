@@ -1,0 +1,30 @@
+Code: 66 3d 11 25 0f 84 b8 00 00 00 41 0f b7 46 28 41 83 c5 01 44 39 e8 0f 8e 89 00 00 00 49 63 dd b9 56 00 00 00 48 0f af d9 49 03 1e <0f> b7 43 54 a8 02 74 b7 48 8b 3b e8 ff c8 be e0 0f b7 43 54 a8
+All code
+========
+   0:	66 3d 11 25          	cmp    $0x2511,%ax
+   4:	0f 84 b8 00 00 00    	je     0xc2
+   a:	41 0f b7 46 28       	movzwl 0x28(%r14),%eax
+   f:	41 83 c5 01          	add    $0x1,%r13d
+  13:	44 39 e8             	cmp    %r13d,%eax
+  16:	0f 8e 89 00 00 00    	jle    0xa5
+  1c:	49 63 dd             	movslq %r13d,%rbx
+  1f:	b9 56 00 00 00       	mov    $0x56,%ecx
+  24:	48 0f af d9          	imul   %rcx,%rbx
+  28:	49 03 1e             	add    (%r14),%rbx
+  2b:*	0f b7 43 54          	movzwl 0x54(%rbx),%eax     <-- trapping instruction
+  2f:	a8 02                	test   $0x2,%al
+  31:	74 b7                	je     0xffffffffffffffea
+  33:	48 8b 3b             	mov    (%rbx),%rdi
+  36:	e8 ff c8 be e0       	callq  0xffffffffe0bec93a
+  3b:*	0f b7 43 54          	movzwl 0x54(%rbx),%eax     <-- trapping instruction
+  3f:	a8                   	.byte 0xa8
+
+Code starting with the faulting instruction
+===========================================
+   0:	0f b7 43 54          	movzwl 0x54(%rbx),%eax
+   4:	a8 02                	test   $0x2,%al
+   6:	74 b7                	je     0xffffffffffffffbf
+   8:	48 8b 3b             	mov    (%rbx),%rdi
+   b:	e8 ff c8 be e0       	callq  0xffffffffe0bec90f
+  10:	0f b7 43 54          	movzwl 0x54(%rbx),%eax
+  14:	a8                   	.byte 0xa8
