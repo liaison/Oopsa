@@ -4,7 +4,8 @@ Oopsa
 A tool to pinpoint the offending line from a Linux kernel oops. 
 
 It is the implementation which enbodies the core results of our paper in MSR'13.
-"Oops! What Did that Code Snippet Come From?"  
+
+<< Oops! What Did that Code Snippet Come From? >>  
 
 http://dl.acm.org/citation.cfm?id=2597094
 
